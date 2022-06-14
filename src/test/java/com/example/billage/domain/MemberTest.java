@@ -10,7 +10,7 @@ import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.NullSource;
 import org.junit.jupiter.params.provider.ValueSource;
 
-public class UserTest {
+public class MemberTest {
 
     @ParameterizedTest
     @CsvSource(value = {"a:46", "a:1"}, delimiter = ':')
@@ -20,10 +20,10 @@ public class UserTest {
         String email = emailChar.repeat(count) + "@a.a";
 
         // when
-        User user = new User(email, "beom", "password123");
+        Member member = new Member(email, "beom", "password123");
 
         // then
-        assertThat(user).isNotNull();
+        assertThat(member).isNotNull();
     }
 
     @ParameterizedTest
@@ -32,7 +32,7 @@ public class UserTest {
     @NullSource
     void signUpExceptionInValidEmailFormat(String email) {
         // when, then
-        Assertions.assertThatThrownBy(() -> new User(email, "범고래", "12345678"))
+        Assertions.assertThatThrownBy(() -> new Member(email, "범고래", "12345678"))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("이메일 형식에 맞지 않습니다.");
     }
@@ -44,7 +44,7 @@ public class UserTest {
         String email = "a".repeat(47) + "@a.a";
 
         // when, then
-        Assertions.assertThatThrownBy(() -> new User(email, "범고래", "12345678"))
+        Assertions.assertThatThrownBy(() -> new Member(email, "범고래", "12345678"))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("이메일 형식에 맞지 않습니다.");
     }
@@ -57,10 +57,10 @@ public class UserTest {
         String nickname = nicknameChar.repeat(count);
 
         // when
-        User user = new User("boem@naver.com", nickname, "password123");
+        Member member = new Member("boem@naver.com", nickname, "password123");
 
         // then
-        assertThat(user).isNotNull();
+        assertThat(member).isNotNull();
     }
 
     @ParameterizedTest
@@ -71,7 +71,7 @@ public class UserTest {
         String nickname = nicknameChar.repeat(count);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> new User("beomWhale@naver.com", nickname, "12345678"))
+        Assertions.assertThatThrownBy(() -> new Member("beomWhale@naver.com", nickname, "12345678"))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("닉네임 형식에 맞지 않습니다.");
     }
@@ -80,7 +80,7 @@ public class UserTest {
     @DisplayName("닉네임에 null 이 들어올시, 예외가 발생한다.")
     void signUpExceptionInvalidNicknameNull() {
         // when, then
-        Assertions.assertThatThrownBy(() -> new User("beomWhale@naver.com", null, "12345678"))
+        Assertions.assertThatThrownBy(() -> new Member("beomWhale@naver.com", null, "12345678"))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("닉네임 형식에 맞지 않습니다.");
     }
@@ -93,10 +93,10 @@ public class UserTest {
         String password = passwordChar.repeat(count);
 
         // when
-        User user = new User("boem@naver.com", "범고래", password);
+        Member member = new Member("boem@naver.com", "범고래", password);
 
         // then
-        assertThat(user).isNotNull();
+        assertThat(member).isNotNull();
     }
 
     @ParameterizedTest
@@ -107,7 +107,7 @@ public class UserTest {
         String password = passwordChar.repeat(count);
 
         // when, then
-        Assertions.assertThatThrownBy(() -> new User("beomWhale@naver.com", "범고래",
+        Assertions.assertThatThrownBy(() -> new Member("beomWhale@naver.com", "범고래",
             password))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("비밀번호 형식에 맞지 않습니다.");

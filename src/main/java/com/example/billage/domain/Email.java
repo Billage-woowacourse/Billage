@@ -3,14 +3,24 @@ package com.example.billage.domain;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import javax.persistence.Embeddable;
+
+import lombok.Getter;
+
+@Embeddable
+@Getter
 public class Email {
 
-    private final String value;
     private static final Pattern PATTERN = Pattern.compile("^[A-Za-z0-9]+@[A-Za-z0-9.]+$");
+
+    private String email;
+
+    protected Email() {
+    }
 
     public Email(String value) {
         validate(value);
-        this.value = value;
+        this.email = value;
     }
 
     private void validate(String value) {
@@ -35,9 +45,5 @@ public class Email {
         if (!PATTERN.matcher(value).matches()) {
             throw new IllegalArgumentException("이메일 형식에 맞지 않습니다.");
         }
-    }
-
-    public String getValue() {
-        return value;
     }
 }

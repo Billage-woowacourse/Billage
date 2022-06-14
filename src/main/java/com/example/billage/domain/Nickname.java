@@ -2,13 +2,22 @@ package com.example.billage.domain;
 
 import java.util.Objects;
 
+import javax.persistence.Embeddable;
+
+import lombok.Getter;
+
+@Embeddable
+@Getter
 public class Nickname {
 
-    private final String value;
+    private String nickname;
+
+    protected Nickname() {
+    }
 
     public Nickname(String value) {
         validate(value);
-        this.value = value;
+        this.nickname = value;
     }
 
     private void validate(String value) {
@@ -27,9 +36,5 @@ public class Nickname {
         if (Objects.isNull(value)) {
             throw new IllegalArgumentException("닉네임 형식에 맞지 않습니다.");
         }
-    }
-
-    public String getValue() {
-        return value;
     }
 }
