@@ -4,12 +4,12 @@ public class User {
 
     private final Email email;
     private final Nickname nickname;
-    private final String password;
+    private final Password password;
 
     public User(String email, String nickname, String password) {
         this.email = new Email(email);
         this.nickname = new Nickname(nickname);
-        this.password = password;
+        this.password = new Password(password);
     }
 
     public String getEmail() {
@@ -21,6 +21,6 @@ public class User {
     }
 
     public String getPassword() {
-        return password;
+        return password.getValue();
     }
 }

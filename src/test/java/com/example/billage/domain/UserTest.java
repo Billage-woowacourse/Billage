@@ -30,7 +30,6 @@ public class UserTest {
           .hasMessage("이메일 형식에 맞지 않습니다.");
     }
 
-    //nickname: 글자 수 체크 (최소 1자 ~ 최대 20자)
     @ParameterizedTest
     @DisplayName("닉네임 글자 수가 맞지 않을 시, 예외가 발생한다.")
     @CsvSource(value = {"a:0", "a:21"}, delimiter = ':')
@@ -47,5 +46,16 @@ public class UserTest {
         Assertions.assertThatThrownBy(() -> new User("beomWhale@naver.com", null, "12345678"))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("닉네임 형식에 맞지 않습니다.");
+    }
+
+    @ParameterizedTest
+    @DisplayName("비밀번호 글자 수가 맞지 않을 시, 예외가 발생한다.")
+    @CsvSource(value = {"a:7", "a:21"}, delimiter = ':')
+    void signUpExceptionInValidPasswordLength(String passwordChar, int count) {
+        String password = passwordChar.repeat(count);
+        Assertions.assertThatThrownBy(() -> new User("beomWhale@naver.com", "범고래",
+            password))
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("비밀번호 형식에 맞지 않습니다.");
     }
 }
