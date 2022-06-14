@@ -1,6 +1,6 @@
-package com.example.billage.domain;
+package billage.domain;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
@@ -33,8 +33,8 @@ public class MemberTest {
     void signUpExceptionInValidEmailFormat(String email) {
         // when, then
         Assertions.assertThatThrownBy(() -> new Member(email, "범고래", "12345678"))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("이메일 형식에 맞지 않습니다.");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이메일 형식에 맞지 않습니다.");
     }
 
     @Test
@@ -45,8 +45,8 @@ public class MemberTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> new Member(email, "범고래", "12345678"))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("이메일 형식에 맞지 않습니다.");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("이메일 형식에 맞지 않습니다.");
     }
 
     @ParameterizedTest
@@ -72,8 +72,8 @@ public class MemberTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> new Member("beomWhale@naver.com", nickname, "12345678"))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("닉네임 형식에 맞지 않습니다.");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("닉네임 형식에 맞지 않습니다.");
     }
 
     @Test
@@ -81,8 +81,8 @@ public class MemberTest {
     void signUpExceptionInvalidNicknameNull() {
         // when, then
         Assertions.assertThatThrownBy(() -> new Member("beomWhale@naver.com", null, "12345678"))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("닉네임 형식에 맞지 않습니다.");
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("닉네임 형식에 맞지 않습니다.");
     }
 
     @ParameterizedTest
@@ -108,8 +108,8 @@ public class MemberTest {
 
         // when, then
         Assertions.assertThatThrownBy(() -> new Member("beomWhale@naver.com", "범고래",
-            password))
-          .isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("비밀번호 형식에 맞지 않습니다.");
+                password))
+            .isInstanceOf(IllegalArgumentException.class)
+            .hasMessage("비밀번호 형식에 맞지 않습니다.");
     }
 }

@@ -1,4 +1,4 @@
-package com.example.billage.domain;
+package billage.domain;
 
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
@@ -7,10 +7,12 @@ import javax.persistence.Id;
 
 import lombok.Getter;
 
-@Entity @Getter
+@Entity
+@Getter
 public class Member {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue
     private Long id;
 
     @Embedded

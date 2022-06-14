@@ -1,4 +1,4 @@
-package com.example.billage.repository;
+package billage.repository;
 
 import static org.assertj.core.api.Assertions.*;
 
@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.billage.domain.Member;
+import billage.domain.Member;
 
 @SpringBootTest
 @Transactional
@@ -20,13 +20,13 @@ public class MemberRepositoryTest {
     @Test
     @DisplayName("회원 저장 기능을 검증한다.")
     void save() {
-        //given
+        // given
         Member member = new Member("sojukang@gmail.com", "sojukang", "12345678");
 
-        //when
+        // when
         Long savedId = memberRepository.save(member);
 
-        //then
+        // then
         assertThat(savedId).isNotNull();
     }
 }
