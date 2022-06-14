@@ -4,16 +4,15 @@ import java.util.Objects;
 
 import javax.persistence.Embeddable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Embeddable
-@Getter
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Nickname {
 
     private String nickname;
-
-    protected Nickname() {
-    }
 
     public Nickname(String value) {
         validate(value);

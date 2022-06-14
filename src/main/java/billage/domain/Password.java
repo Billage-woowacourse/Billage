@@ -4,16 +4,15 @@ import java.util.Objects;
 
 import javax.persistence.Embeddable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Embeddable
-@Getter
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Password {
 
     private String password;
-
-    protected Password() {
-    }
 
     public Password(String password) {
         validate(password);

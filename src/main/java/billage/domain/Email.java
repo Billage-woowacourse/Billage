@@ -5,18 +5,17 @@ import java.util.regex.Pattern;
 
 import javax.persistence.Embeddable;
 
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Embeddable
-@Getter
+@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Email {
 
     private static final Pattern PATTERN = Pattern.compile("^[A-Za-z0-9]+@[A-Za-z0-9.]+$");
 
     private String email;
-
-    protected Email() {
-    }
 
     public Email(String value) {
         validate(value);
