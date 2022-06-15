@@ -41,13 +41,16 @@ public class JwtProvider {
     public boolean isValid(String token) {
         try {
             Jws<Claims> claims = getClaims(token);
-
-            return !claims.getBody()
-              .getExpiration()
-              .before(new Date());
+            return isBeforeExpiration(claims);
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    private boolean isBeforeExpiration(Jws<Claims> claims) {
+        return !claims.getBody()
+          .getExpiration()
+          .before(new Date());
     }
 
     private Jws<Claims> getClaims(String token) {
