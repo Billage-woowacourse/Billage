@@ -1,6 +1,7 @@
 package sogorae.auth.dto;
 
 public class LoginMemberRequest {
+
     private final String email;
     private final String password;
 

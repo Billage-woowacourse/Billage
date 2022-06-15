@@ -1,20 +1,19 @@
 package sogorae.billage.controller;
 
-import static org.assertj.core.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
+import io.restassured.RestAssured;
+import io.restassured.response.ExtractableResponse;
+import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-
 import sogorae.billage.AcceptanceTest;
 import sogorae.billage.dto.MemberSignUpRequest;
-import io.restassured.RestAssured;
-import io.restassured.response.ExtractableResponse;
-import io.restassured.response.Response;
 
 public class MemberControllerTest extends AcceptanceTest {
 
@@ -27,17 +26,18 @@ public class MemberControllerTest extends AcceptanceTest {
 
         // when
         ExtractableResponse<Response> response = RestAssured
-            .given().log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(request)
-            .when().post("/api/members")
-            .then().log().all()
-            .extract();
+          .given().log().all()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .body(request)
+          .when().post("/api/members")
+          .then().log().all()
+          .extract();
 
         // then
         assertAll(
-            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
-            () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo("이메일 형식에 맞지 않습니다.")
+          () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+          () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo(
+            "이메일 형식에 맞지 않습니다.")
         );
     }
 
@@ -47,21 +47,23 @@ public class MemberControllerTest extends AcceptanceTest {
     void saveBadRequestEmail(String nicknameChar, int count) {
         // given
         String nickname = nicknameChar.repeat(count);
-        MemberSignUpRequest request = new MemberSignUpRequest("sojukang@naver.com", nickname, "12345678");
+        MemberSignUpRequest request = new MemberSignUpRequest("sojukang@naver.com", nickname,
+          "12345678");
 
         // when
         ExtractableResponse<Response> response = RestAssured
-            .given().log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(request)
-            .when().post("/api/members")
-            .then().log().all()
-            .extract();
+          .given().log().all()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .body(request)
+          .when().post("/api/members")
+          .then().log().all()
+          .extract();
 
         // then
         assertAll(
-            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
-            () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo("닉네임 형식에 맞지 않습니다.")
+          () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+          () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo(
+            "닉네임 형식에 맞지 않습니다.")
         );
     }
 
@@ -71,21 +73,23 @@ public class MemberControllerTest extends AcceptanceTest {
     void saveBadRequestPassword(String passwordChar, int count) {
         // given
         String password = passwordChar.repeat(count);
-        MemberSignUpRequest request = new MemberSignUpRequest("sojukang@naver.com", "소주캉", password);
+        MemberSignUpRequest request = new MemberSignUpRequest("sojukang@naver.com", "소주캉",
+          password);
 
         // when
         ExtractableResponse<Response> response = RestAssured
-            .given().log().all()
-            .contentType(MediaType.APPLICATION_JSON_VALUE)
-            .body(request)
-            .when().post("/api/members")
-            .then().log().all()
-            .extract();
+          .given().log().all()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .body(request)
+          .when().post("/api/members")
+          .then().log().all()
+          .extract();
 
         // then
         assertAll(
-            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
-            () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo("비밀번호 형식에 맞지 않습니다.")
+          () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
+          () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo(
+            "비밀번호 형식에 맞지 않습니다.")
         );
     }
 }

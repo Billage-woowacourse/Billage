@@ -52,4 +52,13 @@ public class JwtProvider {
             return false;
         }
     }
+
+    public String getPayload(String token) {
+        return Jwts.parserBuilder()
+          .setSigningKey(secretKey)
+          .build()
+          .parseClaimsJws(token)
+          .getBody()
+          .get(EMAIL, String.class);
+    }
 }

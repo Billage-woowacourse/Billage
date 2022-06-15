@@ -1,15 +1,14 @@
 package sogorae.billage.domain;
 
 import java.util.Objects;
-
 import javax.persistence.Embeddable;
-
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Embeddable
-@Getter @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Nickname {
 
     private String nickname;
