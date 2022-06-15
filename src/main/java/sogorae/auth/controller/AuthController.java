@@ -25,7 +25,8 @@ public class AuthController {
 
     @PostMapping("/login")
     public LoginResponse login(@RequestBody LoginMemberRequest request) {
-        Member member = memberService.findByEmailAndPassword(request.getEmail(), request.getPassword());
+        Member member = memberService.findByEmailAndPassword(request.getEmail(),
+          request.getPassword());
         return authService.createToken(member);
     }
 }

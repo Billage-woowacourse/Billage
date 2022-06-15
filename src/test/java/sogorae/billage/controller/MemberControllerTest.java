@@ -3,7 +3,6 @@ package sogorae.billage.controller;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
@@ -11,7 +10,6 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import sogorae.billage.AcceptanceTest;
 import sogorae.billage.dto.MemberSignUpRequest;
 
@@ -25,13 +23,7 @@ public class MemberControllerTest extends AcceptanceTest {
         MemberSignUpRequest request = new MemberSignUpRequest(email, "소주캉", "12345678");
 
         // when
-        ExtractableResponse<Response> response = RestAssured
-          .given().log().all()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(request)
-          .when().post("/api/members")
-          .then().log().all()
-          .extract();
+        ExtractableResponse<Response> response = post("/api/members", request);
 
         // then
         assertAll(
@@ -51,13 +43,7 @@ public class MemberControllerTest extends AcceptanceTest {
           "12345678");
 
         // when
-        ExtractableResponse<Response> response = RestAssured
-          .given().log().all()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(request)
-          .when().post("/api/members")
-          .then().log().all()
-          .extract();
+        ExtractableResponse<Response> response = post("/api/members", request);
 
         // then
         assertAll(
@@ -77,13 +63,7 @@ public class MemberControllerTest extends AcceptanceTest {
           password);
 
         // when
-        ExtractableResponse<Response> response = RestAssured
-          .given().log().all()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(request)
-          .when().post("/api/members")
-          .then().log().all()
-          .extract();
+        ExtractableResponse<Response> response = post("/api/members", request);
 
         // then
         assertAll(
