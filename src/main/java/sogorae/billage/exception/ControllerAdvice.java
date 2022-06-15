@@ -16,13 +16,7 @@ public class ControllerAdvice {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(MemberNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFoundException(RuntimeException e) {
-        return new ErrorResponse(e.getMessage());
-    }
-
-    @ExceptionHandler(LoginFailException.class)
+    @ExceptionHandler({LoginFailException.class, MemberNotFoundException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleLoginFailException(RuntimeException e) {
         return new ErrorResponse(e.getMessage());

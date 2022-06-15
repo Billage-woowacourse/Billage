@@ -22,14 +22,12 @@ public class AuthService {
         this.memberService = memberService;
     }
 
-    public LoginResponse createToken(LoginMemberRequest loginMemberRequest) {
+    public LoginResponse createToken(Member member) {
         try {
-            Member member = memberService.findByEmailAndPassword(loginMemberRequest.getEmail(),
-              loginMemberRequest.getPassword());
             String token = jwtProvider.createToken(member.getEmail());
             return new LoginResponse(token);
         } catch (RuntimeException e) {
-            throw new LoginFailException(e.getCause());
+            throw new InvalidTokenException();
         }
     }
 

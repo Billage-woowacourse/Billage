@@ -6,6 +6,7 @@ import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpStatus;
 import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
@@ -28,5 +29,19 @@ public class AuthAcceptanceTest extends AcceptanceTest {
         // then
         LoginResponse loginResponse = response.body().as(LoginResponse.class);
         assertThat(loginResponse.getAccessToken()).isNotNull();
+    }
+
+    @Test
+    @DisplayName("가입되지 않은 회원 정보로 로그인 시, 예외가 발생한다.")
+    void AuthAcceptanceTest() {
+        // given
+        LoginMemberRequest loginMemberRequest = new LoginMemberRequest("beom@naver.com",
+          "12345678");
+
+        // when
+        ExtractableResponse<Response> response = post("/api/auth/login", loginMemberRequest);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     }
 }
