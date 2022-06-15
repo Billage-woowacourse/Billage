@@ -35,4 +35,12 @@ public class Member {
     public String getEmail() {
         return email.getEmail();
     }
+
+    public String getNickname() {
+        return nickname.getNickname();
+    }
+
+    public String getPassword() {
+        return password.getPassword();
+    }
 }

@@ -28,6 +28,14 @@ public class AcceptanceTest {
           .extract();
     }
 
+    public ExtractableResponse<Response> getWithToken(String url, String token) {
+        return RestAssured.given().log().all()
+          .header("Authorization", "Bearer " + token)
+          .when().get(url)
+          .then().log().all()
+          .extract();
+    }
+
     public ExtractableResponse<Response> post(String url, Object request) {
         return RestAssured.given().log().all()
           .contentType(MediaType.APPLICATION_JSON_VALUE)
