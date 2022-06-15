@@ -22,13 +22,7 @@ public class MemberAcceptanceTest extends AcceptanceTest {
         MemberSignUpRequest request = new MemberSignUpRequest("beom@naver.com", "범고래", "12345678");
 
         // when
-        ExtractableResponse<Response> response = RestAssured
-          .given().log().all()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(request)
-          .when().post("/api/members")
-          .then().log().all()
-          .extract();
+        ExtractableResponse<Response> response = post("/api/members", request);
 
         // then
         assertAll(

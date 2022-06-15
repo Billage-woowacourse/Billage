@@ -2,12 +2,10 @@ package sogorae.auth.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import io.restassured.RestAssured;
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.http.MediaType;
 import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
@@ -20,29 +18,15 @@ public class AuthAcceptanceTest extends AcceptanceTest {
     void login() {
         // given
         MemberSignUpRequest request = new MemberSignUpRequest("beom@naver.com", "범고래", "12345678");
+        post("/api/members", request);
 
         // when
-        RestAssured
-          .given().log().all()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(request)
-          .when().post("/api/members")
-          .then().log().all()
-          .extract();
-
         LoginMemberRequest loginMemberRequest = new LoginMemberRequest("beom@naver.com",
           "12345678");
-        ExtractableResponse<Response> response = RestAssured.given().log().all()
-          .contentType(MediaType.APPLICATION_JSON_VALUE)
-          .body(loginMemberRequest)
-          .when().post("/api/auth/login")
-          .then().log().all()
-          .extract();
-
-        // when
-        LoginResponse loginResponse = response.body().as(LoginResponse.class);
+        ExtractableResponse<Response> response = post("/api/auth/login", loginMemberRequest);
 
         // then
+        LoginResponse loginResponse = response.body().as(LoginResponse.class);
         assertThat(loginResponse.getAccessToken()).isNotNull();
     }
 }
