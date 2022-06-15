@@ -15,7 +15,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class JwtProvider {
 
-    public static final String EMAIL = "email";
+    private static final String EMAIL = "email";
 
     private final SecretKey secretKey;
     private final long validityInMilliseconds;
@@ -40,10 +40,7 @@ public class JwtProvider {
 
     public boolean isValid(String token) {
         try {
-            Jws<Claims> claims = Jwts.parserBuilder()
-              .setSigningKey(secretKey)
-              .build()
-              .parseClaimsJws(token);
+            Jws<Claims> claims = getClaims(token);
 
             return !claims.getBody()
               .getExpiration()
@@ -51,6 +48,13 @@ public class JwtProvider {
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }
+    }
+
+    private Jws<Claims> getClaims(String token) {
+        return Jwts.parserBuilder()
+          .setSigningKey(secretKey)
+          .build()
+          .parseClaimsJws(token);
     }
 
     public String getPayload(String token) {
