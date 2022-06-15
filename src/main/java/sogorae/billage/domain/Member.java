@@ -32,4 +32,8 @@ public class Member {
         this.nickname = new Nickname(nickname);
         this.password = new Password(password);
     }
+
+    public String getEmail() {
+        return email.getEmail();
+    }
 }

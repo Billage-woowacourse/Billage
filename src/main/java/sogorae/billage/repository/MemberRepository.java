@@ -1,23 +1,10 @@
 package sogorae.billage.repository;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import org.springframework.stereotype.Repository;
-
 import sogorae.billage.domain.Member;
 
-import lombok.RequiredArgsConstructor;
+public interface MemberRepository {
 
-@Repository
-@RequiredArgsConstructor
-public class MemberRepository {
+    Long save(Member member);
 
-    @PersistenceContext
-    private final EntityManager em;
-
-    public Long save(Member member) {
-        em.persist(member);
-        return member.getId();
-    }
+    Member findByEmail(String email);
 }
