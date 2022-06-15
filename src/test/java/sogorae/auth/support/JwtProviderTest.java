@@ -50,4 +50,17 @@ public class JwtProviderTest {
         // then
         assertThat(result).isFalse();
     }
+
+    @Test
+    @DisplayName("토큰에 담긴 payLoad를 조회한다.")
+    void getPayload() {
+        // given
+        String token = jwtProvider.createToken(email);
+
+        // when
+        String getEmail = jwtProvider.getPayload(token);
+
+        // then
+        assertThat(getEmail).isEqualTo(email);
+    }
 }
