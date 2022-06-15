@@ -1,6 +1,7 @@
 package sogorae.auth.acceptance;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import io.restassured.response.ExtractableResponse;
 import io.restassured.response.Response;
@@ -28,7 +29,10 @@ public class AuthAcceptanceTest extends AcceptanceTest {
 
         // then
         LoginResponse loginResponse = response.body().as(LoginResponse.class);
-        assertThat(loginResponse.getAccessToken()).isNotNull();
+        assertAll(
+          () -> assertThat(loginResponse.getAccessToken()).isNotNull(),
+          () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+        );
     }
 
     @Test
