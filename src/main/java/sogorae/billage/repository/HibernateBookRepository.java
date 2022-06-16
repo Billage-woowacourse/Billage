@@ -1,5 +1,6 @@
 package sogorae.billage.repository;
 
+import java.util.List;
 import java.util.Objects;
 
 import javax.persistence.EntityManager;
@@ -33,5 +34,10 @@ public class HibernateBookRepository implements BookRepository {
         if (Objects.isNull(book)) {
             throw new BookNotFoundException();
         }
+    }
+
+    public List<Book> findAll() {
+        String jpql = "SELECT b from Book b";
+        return em.createQuery(jpql, Book.class).getResultList();
     }
 }

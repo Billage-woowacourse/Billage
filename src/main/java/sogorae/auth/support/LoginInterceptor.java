@@ -19,6 +19,16 @@ public class LoginInterceptor implements HandlerInterceptor {
         if (request.getMethod().equals("POST") && request.getRequestURI().equals("/api/members")) {
             return true;
         }
+
+
+        if (request.getMethod().equals("GET") && request.getRequestURI().equals("/api/books")) {
+            return true;
+        }
+
+        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/api/books/")) {
+            return true;
+        }
+
         String token = AuthorizationExtractor.extract(request);
         if (!jwtProvider.isValid(token)) {
             throw new InvalidTokenException();

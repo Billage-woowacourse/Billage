@@ -3,6 +3,9 @@ package sogorae.billage.service;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +14,7 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.domain.Book;
+import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.exception.BookInvalidException;
@@ -153,7 +157,30 @@ class BookServiceTest {
             .isInstanceOf(BookNotFoundException.class)
             .hasMessage("해당 책이 존재하지 않습니다.");
     }
-    
+
+    @Test
+    @DisplayName("전체 책을 조회한다.")
+    void findAll() {
+        // given
+        Member member = new Member("email@naver.com", "nickname", "password");
+        MemberSignUpRequest signUpRequest = new MemberSignUpRequest(
+            member.getEmail(), member.getNickname(), member.getPassword());
+        memberService.save(signUpRequest);
+        BookRegisterRequest request = new BookRegisterRequest("책 제목", "image_url", "책 상세 메세지", "책 위치");
+        BookRegisterRequest request2 = new BookRegisterRequest("책 제목2", "image_url2", "책 상세 메세지2", "책 위치2");
+        bookService.register(request, signUpRequest.getEmail());
+        bookService.register(request2, signUpRequest.getEmail());
+
+        // when
+        List<Book> books = bookService.findAll();
+
+        // then
+        Assertions.assertAll(
+            () -> assertThat(request.getTitle()).isEqualTo(books.get(0).getTitle()),
+            () -> assertThat(request2.getTitle()).isEqualTo(books.get(1).getTitle())
+        );
+    }
+
     @Test
     @DisplayName("사용자 email과 bookId를 입력 받아, 책을 반납한다.")
     void returning() {
@@ -171,7 +198,7 @@ class BookServiceTest {
 
         bookService.requestRent(savedId, clientEmail);
         bookService.allowRent(savedId, ownerEmail);
-        
+
         // when
         bookService.returning(savedId, ownerEmail);
         Book foundBook = bookService.findById(savedId);

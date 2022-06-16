@@ -1,12 +1,14 @@
 package sogorae.billage.service;
 
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
-import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.repository.BookRepository;
 import sogorae.billage.repository.MemberRepository;
 
@@ -38,6 +40,10 @@ public class BookService {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
         book.allowRent(member);
+    }
+
+    public List<Book> findAll() {
+        return bookRepository.findAll();
     }
 
     public void returning(Long bookId, String email) {
