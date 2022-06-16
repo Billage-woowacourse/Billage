@@ -109,4 +109,16 @@ public class Book {
             throw new BookInvalidException("책을 제거할 수 있는 상태가 아닙니다.");
         }
     }
+
+    public void updateInformation(Member member, String location, String detailMessage) {
+        validUpdateInformation(member);
+        this.location = location;
+        this.detailMessage = detailMessage;
+    }
+
+    private void validUpdateInformation(Member owner) {
+        if (noneMatchOwner(owner)) {
+            throw new BookInvalidException("책을 정보를 수정할 권한이 없습니다.");
+        }
+    }
 }
