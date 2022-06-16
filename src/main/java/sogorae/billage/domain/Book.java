@@ -1,21 +1,39 @@
 package sogorae.billage.domain;
 
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
+@Entity
+@Getter
 @AllArgsConstructor
+@NoArgsConstructor
 public class Book {
 
-    private final Member member;
-    private final String title;
-    private final String imageUrl;
-    private final String detailMessage;
-    private final String location;
+    @Id
+    @GeneratedValue
+    private Long id;
+
+    @ManyToOne
+    private Member member;
+    private String title;
+    private String imageUrl;
+    private String detailMessage;
+    private String location;
+
+    @Enumerated(EnumType.STRING)
     private Status status;
-    private final boolean isActive;
+    private boolean isActive;
 
     public Book(Member member, String title, String imageUrl, String detailMessage,
       String location) {
-        this(member, title, imageUrl, detailMessage, location, Status.AVAILABLE, true);
+        this(null, member, title, imageUrl, detailMessage, location, Status.AVAILABLE, true);
     }
 
     public void requestRent(Member member) {

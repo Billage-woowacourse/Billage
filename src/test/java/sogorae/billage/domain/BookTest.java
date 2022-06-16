@@ -13,7 +13,7 @@ public class BookTest {
     void rent() {
         // given
         Member owner = new Member("email@naver.com", "nickname", "password");
-        Book book = new Book(owner,"책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
 
         Member client = new Member("client@naver.com", "client", "password");
 
@@ -30,7 +30,7 @@ public class BookTest {
     void rentPendingBook() {
         // given
         Member owner = new Member("email@naver.com", "nickname", "password");
-        Book book = new Book(owner,"책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
 
         Member client = new Member("client@naver.com", "client", "password");
         book.requestRent(client);
@@ -46,7 +46,7 @@ public class BookTest {
     void rentUnavailableBook() {
         // given
         Member owner = new Member("email@naver.com", "nickname", "password");
-        Book book = new Book(owner,"책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
         Member client = new Member("client@naver.com", "client", "password");
         book.requestRent(client);
         book.allowRent();
@@ -62,7 +62,7 @@ public class BookTest {
     void allowRent() {
         // given
         Member owner = new Member("email@naver.com", "nickname", "password");
-        Book book = new Book(owner,"책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
         Member client = new Member("client@naver.com", "client", "password");
         book.requestRent(client);
 
@@ -79,7 +79,7 @@ public class BookTest {
     void allowRentUnavailable() {
         // given
         Member owner = new Member("email@naver.com", "nickname", "password");
-        Book book = new Book(owner,"책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
         Member client = new Member("client@naver.com", "client", "password");
         book.requestRent(client);
         book.allowRent();
