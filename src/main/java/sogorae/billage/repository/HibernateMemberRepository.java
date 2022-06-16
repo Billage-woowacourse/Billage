@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import sogorae.billage.domain.Email;
 import sogorae.billage.domain.Member;
 import sogorae.billage.domain.Password;
+import sogorae.billage.exception.MemberDuplicationException;
 import sogorae.billage.exception.MemberNotFoundException;
 
 @Repository
@@ -20,8 +21,19 @@ public class HibernateMemberRepository implements MemberRepository {
 
     @Override
     public Long save(Member member) {
+        validateDuplication(member);
         em.persist(member);
         return member.getId();
+    }
+
+    private void validateDuplication(Member member) {
+        String queryString = "select count(m.id) > 0 from Member m where m.email = :email";
+        TypedQuery<Boolean> query = em.createQuery(queryString, Boolean.class);
+        query.setParameter("email", new Email(member.getEmail()));
+        Boolean isDuplicated = query.getSingleResult();
+        if (isDuplicated) {
+            throw new MemberDuplicationException();
+        }
     }
 
     @Override

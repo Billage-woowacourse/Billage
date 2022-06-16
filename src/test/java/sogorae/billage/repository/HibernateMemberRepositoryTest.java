@@ -1,6 +1,7 @@
 package sogorae.billage.repository;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -8,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.domain.Member;
+import sogorae.billage.exception.MemberDuplicationException;
 
 @SpringBootTest
 @Transactional
@@ -24,6 +26,22 @@ public class HibernateMemberRepositoryTest {
 
         // when
         Long savedId = memberRepository.save(member);
+
+        // then
+        assertThat(savedId).isNotNull();
+    }
+
+    @Test
+    @DisplayName("이미 존재하는 회원을 저장할 시, 예외가 발생한다.")
+    void saveExceptionDuplication() {
+        // given
+        Member member = new Member("sojukang@gmail.com", "sojukang", "12345678");
+        Long savedId = memberRepository.save(member);
+
+        // when
+        assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(
+            MemberDuplicationException.class)
+          .hasMessage("이미 존재하는 회원입니다.");
 
         // then
         assertThat(savedId).isNotNull();
