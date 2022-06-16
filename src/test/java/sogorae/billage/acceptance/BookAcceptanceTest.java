@@ -116,6 +116,44 @@ public class BookAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
+    @DisplayName("책 id, 책 owner 멤버 email 을 받아 반납을 완료한다.")
+    void returning() {
+        // given
+        String email = "beomWhale@naver.com";
+        String password = "Password";
+        MemberSignUpRequest signUpRequest = new MemberSignUpRequest(email, "beom", password);
+        post("/api/members", signUpRequest);
+
+        String clientEmail = "sojukang@naver.com";
+        String clientPassword = "Password";
+        MemberSignUpRequest clientSignUpRequest = new MemberSignUpRequest(clientEmail, "sojukang", clientPassword);
+        post("/api/members", clientSignUpRequest);
+
+        LoginMemberRequest loginMemberRequest = new LoginMemberRequest(email, password);
+        String token = getTokenWithLogin(loginMemberRequest);
+
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
+          token, bookRegisterRequest);
+
+        String[] locations = bookRegisterResponse.header("Location").split("/");
+        long bookId = Long.parseLong(locations[locations.length - 1]);
+
+        LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
+          clientPassword);
+        String clientToken = getTokenWithLogin(clientLoginRequest);
+
+        // when
+        postWithToken("/api/books/" + bookId, clientToken, clientEmail);
+        postWithToken("/api/books/" + bookId + "/rents", token, email);
+
+        ExtractableResponse<Response> response = putWithToken("/api/books/" + bookId, token, clientEmail);
+
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
     @DisplayName("책 id 를 받아 단일 책 정보를 조회한다.")
     void findOne() {
         // given

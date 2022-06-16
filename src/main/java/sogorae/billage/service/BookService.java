@@ -2,13 +2,13 @@ package sogorae.billage.service;
 
 import java.util.List;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import lombok.RequiredArgsConstructor;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
-import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.repository.BookRepository;
 import sogorae.billage.repository.MemberRepository;
 
@@ -44,5 +44,11 @@ public class BookService {
 
     public List<Book> findAll() {
         return bookRepository.findAll();
+    }
+
+    public void returning(Long bookId, String email) {
+        Member member = memberRepository.findByEmail(email);
+        Book book = bookRepository.findById(bookId);
+        book.returning(member);
     }
 }
