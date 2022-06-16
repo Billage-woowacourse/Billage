@@ -14,6 +14,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
+
+import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
@@ -108,11 +110,35 @@ class BookServiceTest {
 
         // when
         bookService.requestRent(bookId, clientEmail);
-        bookService.allowRent(bookId, ownerEmail);
+        bookService.allowOrDeny(bookId, ownerEmail, AllowOrDeny.ALLOW);
 
         // then
         Book book = bookService.findById(bookId);
         assertThat(book.isRentAvailable()).isFalse();
+    }
+
+    @Test
+    @DisplayName("bookId와 사용자 email을 입력 받아, 대여 요청을 거절한다.")
+    void denyRent() {
+        // given
+        String ownerEmail = "beomWhale@naver.com";
+        MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
+        memberService.save(ownerRequest);
+        String clientEmail = "sojukang@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "sojukang", "Password");
+        memberService.save(clientRequest);
+
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+            "책 상세 메세지", "책 위치");
+        Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
+
+        // when
+        bookService.requestRent(bookId, clientEmail);
+        bookService.allowOrDeny(bookId, ownerEmail, AllowOrDeny.DENY);
+
+        // then
+        Book book = bookService.findById(bookId);
+        assertThat(book.isRentAvailable()).isTrue();
     }
 
     @Test
@@ -131,9 +157,30 @@ class BookServiceTest {
 
         // when
         bookService.requestRent(bookId, clientEmail);
-        assertThatThrownBy(() -> bookService.allowRent(bookId, clientEmail))
+        assertThatThrownBy(() -> bookService.allowOrDeny(bookId, clientEmail, AllowOrDeny.ALLOW))
           .isInstanceOf(BookInvalidException.class)
           .hasMessage("책 대여 요청을 수락할 권한이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("대여 요청 거절 시, owner가 아니면 예외가 발생한다.")
+    void denyRentExceptionNotAuthority() {
+        // given
+        String ownerEmail = "beomWhale@naver.com";
+        MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
+        memberService.save(ownerRequest);
+        String clientEmail = "sojukang@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "sojukang", "Password");
+        memberService.save(clientRequest);
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+            "책 상세 메세지", "책 위치");
+        Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
+
+        // when
+        bookService.requestRent(bookId, clientEmail);
+        assertThatThrownBy(() -> bookService.allowOrDeny(bookId, clientEmail, AllowOrDeny.DENY))
+            .isInstanceOf(BookInvalidException.class)
+            .hasMessage("책 대여 요청을 거절할 권한이 없습니다.");
     }
 
     @Test
@@ -200,7 +247,7 @@ class BookServiceTest {
         Long savedId = bookService.register(bookRegisterRequest, ownerEmail);
 
         bookService.requestRent(savedId, clientEmail);
-        bookService.allowRent(savedId, ownerEmail);
+        bookService.allowOrDeny(savedId, ownerEmail, AllowOrDeny.ALLOW);
 
         // when
         bookService.returning(savedId, ownerEmail);
@@ -211,7 +258,7 @@ class BookServiceTest {
     }
 
     @Test
-    @DisplayName("사용자 email과 bookId를 입력 받아, 책을 반납한다.")
+    @DisplayName("사용자 email과 bookId를 입력 받아, 책을 제거한다.")
     void changeToInactive() {
         // given
         String ownerEmail = "beomWhale@naver.com";
