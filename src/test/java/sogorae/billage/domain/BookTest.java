@@ -2,6 +2,7 @@ package sogorae.billage.domain;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -163,7 +164,7 @@ public class BookTest {
         Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
         Member client = new Member("client@naver.com", "client", "password");
 
-        // when
+        // when, then
         assertThatThrownBy(() -> book.changeToInactive(client))
           .isInstanceOf(BookInvalidException.class)
           .hasMessage("책을 제거할 권한이 없습니다.");
@@ -179,9 +180,44 @@ public class BookTest {
         book.requestRent(client);
         book.allowRent(owner);
 
-        // when
+        // when, then
         assertThatThrownBy(() -> book.changeToInactive(owner))
           .isInstanceOf(BookInvalidException.class)
           .hasMessage("책을 제거할 수 있는 상태가 아닙니다.");
+    }
+    
+    @Test
+    @DisplayName("장소와 상세 메시지를 입력 받아 등록한 책의 정보를 수정한다.")
+    void updateInformation() {
+        // given
+        Member owner = new Member("email@naver.com", "nickname", "password");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
+        String location = "선릉";
+        String detailMessage = "상세 메세지";
+
+        // when
+        book.updateInformation(owner, location, detailMessage);
+
+        // then
+        assertAll(
+          () -> assertThat(book.getDetailMessage()).isEqualTo(detailMessage),
+          () -> assertThat(book.getLocation()).isEqualTo(location)
+        );
+    }
+
+    @Test
+    @DisplayName("장소와 상세 메시지를 입력 받아 등록한 책의 정보를 수정한다.")
+    void updateInformationExceptionNotOwner() {
+        // given
+        Member owner = new Member("owner@naver.com", "owner", "password");
+        Member client = new Member("client@naver.com", "client", "password");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
+        String location = "선릉";
+        String detailMessage = "상세 메세지";
+
+        // when, then
+        assertThatThrownBy(() -> book.updateInformation(client, location, detailMessage))
+          .isInstanceOf(BookInvalidException.class)
+          .hasMessage("책을 정보를 수정할 권한이 없습니다.");
     }
 }
