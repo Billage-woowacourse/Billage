@@ -9,6 +9,7 @@ import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.repository.BookRepository;
 import sogorae.billage.repository.MemberRepository;
+import sogorae.billage.service.dto.ServiceBookUpdateRequest;
 
 @Service
 @Transactional
@@ -50,5 +51,12 @@ public class BookService {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
         book.changeToInactive(member);
+    }
+
+    public void updateInformation(ServiceBookUpdateRequest serviceBookUpdateRequest) {
+        Member member = memberRepository.findByEmail(serviceBookUpdateRequest.getEmail());
+        Book book = bookRepository.findById(serviceBookUpdateRequest.getBookId());
+        book.updateInformation(member, serviceBookUpdateRequest.getLocation(),
+          serviceBookUpdateRequest.getDetailMessage());
     }
 }
