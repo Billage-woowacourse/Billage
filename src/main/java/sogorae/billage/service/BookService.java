@@ -45,4 +45,10 @@ public class BookService {
         Book book = bookRepository.findById(bookId);
         book.returning(member);
     }
+
+    public void changeToInactive(Long bookId, String email) {
+        Member member = memberRepository.findByEmail(email);
+        Book book = bookRepository.findById(bookId);
+        book.changeToInactive(member);
+    }
 }

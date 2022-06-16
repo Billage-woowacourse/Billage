@@ -3,6 +3,7 @@ package sogorae.billage.controller;
 import java.net.URI;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -50,6 +51,12 @@ public class BookController {
     @PutMapping("/{bookId}")
     public ResponseEntity<BookResponse> returning(@PathVariable Long bookId, @AuthenticationPrincipal LoginMember loginMember) {
         bookService.returning(bookId, loginMember.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{bookId}")
+    public ResponseEntity<BookResponse> delete(@PathVariable Long bookId, @AuthenticationPrincipal LoginMember loginMember) {
+        bookService.changeToInactive(bookId, loginMember.getEmail());
         return ResponseEntity.ok().build();
     }
 }
