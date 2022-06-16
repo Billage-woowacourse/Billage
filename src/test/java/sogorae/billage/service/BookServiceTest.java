@@ -7,14 +7,18 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.domain.Book;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.exception.BookInvalidException;
+import sogorae.billage.exception.BookNotFoundException;
 
 @SpringBootTest
 @Transactional
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class BookServiceTest {
 
     @Autowired
@@ -123,5 +127,30 @@ class BookServiceTest {
         assertThatThrownBy(() -> bookService.allowRent(bookId, clientEmail))
           .isInstanceOf(BookInvalidException.class)
           .hasMessage("책 대여 요청을 수락할 권한이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("BookId를 입력 받아 조회한다.")
+    void findById() {
+        // given
+        MemberSignUpRequest signUpRequest = new MemberSignUpRequest("email@naver.com", "nickname", "password");
+        memberService.save(signUpRequest);
+        BookRegisterRequest request = new BookRegisterRequest("책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Long savedId = bookService.register(request, signUpRequest.getEmail());
+
+        // when
+        Book foundBook = bookService.findById(savedId);
+
+        // then
+        assertThat(foundBook.getId()).isEqualTo(savedId);
+    }
+
+    @Test
+    @DisplayName("없는 BookId를 입력 받아 조회할 경우 예외가 발생한다.")
+    void findByIdExceptionNotFound() {
+        // when, then
+        assertThatThrownBy(() -> bookService.findById(99L))
+            .isInstanceOf(BookNotFoundException.class)
+            .hasMessage("해당 책이 존재하지 않습니다.");
     }
 }

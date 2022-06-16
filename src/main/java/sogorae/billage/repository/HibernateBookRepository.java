@@ -1,10 +1,13 @@
 package sogorae.billage.repository;
 
+import java.util.Objects;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 import sogorae.billage.domain.Book;
+import sogorae.billage.exception.BookNotFoundException;
 
 @Repository
 @RequiredArgsConstructor
@@ -21,6 +24,14 @@ public class HibernateBookRepository implements BookRepository {
 
     @Override
     public Book findById(Long bookId) {
-        return em.find(Book.class, bookId);
+        Book book = em.find(Book.class, bookId);
+        validateBookExists(book);
+        return book;
+    }
+
+    private void validateBookExists(Book book) {
+        if (Objects.isNull(book)) {
+            throw new BookNotFoundException();
+        }
     }
 }
