@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 import sogorae.auth.dto.LoginMember;
 import sogorae.auth.support.AuthenticationPrincipal;
+import sogorae.billage.dto.AllowRentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.service.BookService;
@@ -43,8 +44,10 @@ public class BookController {
     }
 
     @PostMapping("/{bookId}/rents")
-    public ResponseEntity<Void> allowRent(@PathVariable Long bookId, @AuthenticationPrincipal LoginMember loginMember) {
-        bookService.allowRent(bookId, loginMember.getEmail());
+    public ResponseEntity<Void> allowRent(@PathVariable Long bookId,
+        @RequestBody AllowRentRequest request,
+        @AuthenticationPrincipal LoginMember loginMember) {
+        bookService.allowOrDeny(bookId, loginMember.getEmail(), AllowOrDeny.from(request.getAllowOrDeny()));
         return ResponseEntity.ok().build();
     }
 

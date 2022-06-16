@@ -14,6 +14,7 @@ import io.restassured.response.Response;
 import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
+import sogorae.billage.dto.AllowRentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.MemberSignUpRequest;
@@ -109,10 +110,53 @@ public class BookAcceptanceTest extends AcceptanceTest {
             clientPassword);
         String clientToken = getTokenWithLogin(clientLoginRequest);
 
-        // when
         postWithToken("/api/books/" + bookId, clientToken, clientEmail);
+
+        // when
+        AllowRentRequest allowRentRequest = new AllowRentRequest("allow");
+
         ExtractableResponse<Response> response = postWithToken(
-            "/api/books/" + bookId + "/rents", token, email);
+            "/api/books/" + bookId + "/rents", token, allowRentRequest);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("책 id, 빌리는 멤버 email 을 받아 대여 요청을 거절한다.")
+    void allowRent_deny() {
+        // given
+        String email = "beomWhale@naver.com";
+        String password = "Password";
+        MemberSignUpRequest signUpRequest = new MemberSignUpRequest(email, "beom", password);
+        post("/api/members", signUpRequest);
+
+        String clientEmail = "sojukang@naver.com";
+        String clientPassword = "Password";
+        MemberSignUpRequest clientSignUpRequest = new MemberSignUpRequest(clientEmail, "sojukang", clientPassword);
+        post("/api/members", clientSignUpRequest);
+
+        LoginMemberRequest loginMemberRequest = new LoginMemberRequest(email, password);
+        String token = getTokenWithLogin(loginMemberRequest);
+
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+            "책 상세 메세지", "책 위치");
+        ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
+            token, bookRegisterRequest);
+
+        String[] locations = bookRegisterResponse.header("Location").split("/");
+        long bookId = Long.parseLong(locations[locations.length - 1]);
+
+        LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
+            clientPassword);
+        String clientToken = getTokenWithLogin(clientLoginRequest);
+
+        postWithToken("/api/books/" + bookId, clientToken, clientEmail);
+
+        // when
+        AllowRentRequest allowRentRequest = new AllowRentRequest("deny");
+        ExtractableResponse<Response> response = postWithToken(
+            "/api/books/" + bookId + "/rents", token, allowRentRequest);
+
+        // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -147,7 +191,9 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         // when
         postWithToken("/api/books/" + bookId, clientToken, clientEmail);
-        postWithToken("/api/books/" + bookId + "/rents", token, email);
+
+        AllowRentRequest allowRentRequest = new AllowRentRequest("allow");
+        postWithToken("/api/books/" + bookId + "/rents", token, allowRentRequest);
 
         ExtractableResponse<Response> response = putWithToken("/api/books/" + bookId, token, clientEmail);
 
@@ -224,7 +270,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
     }
 
     @Test
-    @DisplayName("책 id, 책 owner 멤버 email 을 받아 반납을 완료한다.")
+    @DisplayName("사용자 email과 bookId를 입력 받아, 책을 제거한다.")
     void delete() {
         // given
         String email = "beomWhale@naver.com";

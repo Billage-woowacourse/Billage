@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import lombok.RequiredArgsConstructor;
+import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
@@ -36,10 +37,24 @@ public class BookService {
         return bookRepository.findById(bookId);
     }
 
-    public void allowRent(Long bookId, String email) {
+    public void allowOrDeny(Long bookId, String email, AllowOrDeny allowOrDeny) {
+        if (allowOrDeny.isAllow()) {
+            allowRent(bookId, email);
+            return;
+        }
+        denyRent(bookId, email);
+    }
+
+    private void allowRent(Long bookId, String email) {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
         book.allowRent(member);
+    }
+
+    private void denyRent(Long bookId, String email) {
+        Member member = memberRepository.findByEmail(email);
+        Book book = bookRepository.findById(bookId);
+        book.denyRent(member);
     }
 
     public List<Book> findAll() {

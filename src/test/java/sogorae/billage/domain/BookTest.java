@@ -5,6 +5,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+
+import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.exception.BookInvalidException;
 
 public class BookTest {
