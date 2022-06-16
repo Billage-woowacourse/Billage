@@ -31,4 +31,10 @@ public class BookController {
         bookService.requestRent(bookId, loginMember.getEmail());
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/{bookId}/rents")
+    public ResponseEntity<Void> allowRent(@PathVariable Long bookId, @AuthenticationPrincipal LoginMember loginMember) {
+        bookService.allowRent(bookId, loginMember.getEmail());
+        return ResponseEntity.ok().build();
+    }
 }
