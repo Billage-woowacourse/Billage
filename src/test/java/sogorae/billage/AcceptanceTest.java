@@ -66,4 +66,14 @@ public class AcceptanceTest {
           .then().log().all()
           .extract();
     }
+
+    public ExtractableResponse<Response> deleteWithToken(String url, String token, Object request) {
+        return RestAssured.given().log().all()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .header("Authorization", "Bearer " + token)
+          .body(request)
+          .when().delete(url)
+          .then().log().all()
+          .extract();
+    }
 }
