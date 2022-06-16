@@ -8,11 +8,14 @@ import io.restassured.response.Response;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
 import sogorae.billage.dto.MemberSignUpRequest;
 
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AuthAcceptanceTest extends AcceptanceTest {
 
     @Test
@@ -28,7 +31,7 @@ public class AuthAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = post("/api/auth/login", loginMemberRequest);
 
         // then
-        LoginResponse loginResponse = response.body().as(LoginResponse.class);
+        LoginResponse loginResponse = response.as(LoginResponse.class);
         assertAll(
           () -> assertThat(loginResponse.getAccessToken()).isNotNull(),
           () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
@@ -37,7 +40,7 @@ public class AuthAcceptanceTest extends AcceptanceTest {
 
     @Test
     @DisplayName("가입되지 않은 회원 정보로 로그인 시, 예외가 발생한다.")
-    void AuthAcceptanceTest() {
+    void loginExceptionNotSignUp() {
         // given
         LoginMemberRequest loginMemberRequest = new LoginMemberRequest("beom@naver.com",
           "12345678");
