@@ -37,9 +37,6 @@ public class BookService {
     public void allowRent(Long bookId, String email) {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        if (book.noneMatchOwner(member)) {
-            throw new BookInvalidException("책 대여 요청을 수락할 권한이 없습니다.");
-        }
-        book.allowRent();
+        book.allowRent(member);
     }
 }

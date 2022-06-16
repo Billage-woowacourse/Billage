@@ -49,7 +49,7 @@ public class BookTest {
         Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
         Member client = new Member("client@naver.com", "client", "password");
         book.requestRent(client);
-        book.allowRent();
+        book.allowRent(owner);
 
         // when, then
         assertThatThrownBy(() -> book.requestRent(client))
@@ -67,7 +67,7 @@ public class BookTest {
         book.requestRent(client);
 
         // when
-        book.allowRent();
+        book.allowRent(owner);
 
         // then
         boolean actual = book.isRentAvailable();
@@ -82,10 +82,10 @@ public class BookTest {
         Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
         Member client = new Member("client@naver.com", "client", "password");
         book.requestRent(client);
-        book.allowRent();
+        book.allowRent(owner);
 
         // when, then
-        assertThatThrownBy(book::allowRent)
+        assertThatThrownBy(() -> book.allowRent(owner))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("대여 수락을 할 수 없습니다.");
     }

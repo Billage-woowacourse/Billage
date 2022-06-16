@@ -9,6 +9,7 @@ import javax.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import sogorae.billage.exception.BookInvalidException;
 
 @Entity
 @Getter
@@ -44,12 +45,18 @@ public class Book {
         throw new IllegalArgumentException("대여 요청을 할 수 없습니다.");
     }
 
-    public void allowRent() {
-        if (status == Status.PENDING) {
-            status = Status.UNAVAILABLE;
-            return;
+    public void allowRent(Member member) {
+        validAllowRent(member);
+        status = Status.UNAVAILABLE;
+    }
+
+    private void validAllowRent(Member member) {
+        if (noneMatchOwner(member)) {
+            throw new BookInvalidException("책 대여 요청을 수락할 권한이 없습니다.");
         }
-        throw new IllegalArgumentException("대여 수락을 할 수 없습니다.");
+        if (!(status == Status.PENDING)) {
+            throw new IllegalArgumentException("대여 수락을 할 수 없습니다.");
+        }
     }
 
     public boolean isRentAvailable() {
