@@ -51,6 +51,20 @@ public class Book {
         status = Status.UNAVAILABLE;
     }
 
+    public void denyRent(Member member) {
+        validDenyRent(member);
+        status = Status.AVAILABLE;
+    }
+
+    private void validDenyRent(Member member) {
+        if (noneMatchOwner(member)) {
+            throw new BookInvalidException("책 대여 요청을 거절할 권한이 없습니다.");
+        }
+        if (!(status == Status.PENDING)) {
+            throw new IllegalArgumentException("대여 거절을 할 수 없습니다.");
+        }
+    }
+
     private void validAllowRent(Member member) {
         if (noneMatchOwner(member)) {
             throw new BookInvalidException("책 대여 요청을 수락할 권한이 없습니다.");
