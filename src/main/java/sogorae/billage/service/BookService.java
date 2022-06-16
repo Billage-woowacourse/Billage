@@ -39,4 +39,10 @@ public class BookService {
         Book book = bookRepository.findById(bookId);
         book.allowRent(member);
     }
+
+    public void returning(Long bookId, String email) {
+        Member member = memberRepository.findByEmail(email);
+        Book book = bookRepository.findById(bookId);
+        book.returning(member);
+    }
 }

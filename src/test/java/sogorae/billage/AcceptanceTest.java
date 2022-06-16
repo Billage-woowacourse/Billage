@@ -56,4 +56,14 @@ public class AcceptanceTest {
           .then().log().all()
           .extract();
     }
+
+    public ExtractableResponse<Response> putWithToken(String url, String token, Object request) {
+        return RestAssured.given().log().all()
+          .contentType(MediaType.APPLICATION_JSON_VALUE)
+          .header("Authorization", "Bearer " + token)
+          .body(request)
+          .when().put(url)
+          .then().log().all()
+          .extract();
+    }
 }

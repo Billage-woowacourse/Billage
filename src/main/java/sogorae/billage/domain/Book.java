@@ -66,4 +66,18 @@ public class Book {
     public boolean noneMatchOwner(Member member) {
         return !this.member.isSameNickname(member);
     }
+
+    public void returning(Member owner) {
+        validReturning(owner);
+        status = Status.AVAILABLE;
+    }
+
+    private void validReturning(Member owner) {
+        if (noneMatchOwner(owner)) {
+            throw new BookInvalidException("반납 완료할 권한이 없습니다.");
+        }
+        if (!(status == Status.UNAVAILABLE)) {
+            throw new BookInvalidException("반납할 수 있는 상태가 아닙니다.");
+        }
+    }
 }
