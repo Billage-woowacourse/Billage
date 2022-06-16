@@ -16,6 +16,7 @@ import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
+import sogorae.billage.dto.BookUpdateRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 
 public class BookAcceptanceTest extends AcceptanceTest {
@@ -34,14 +35,14 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         // when
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         ExtractableResponse<Response> response = postWithToken("/api/books/",
-            token, bookRegisterRequest);
+          token, bookRegisterRequest);
 
         // then
         assertAll(
-            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
-            () -> assertThat(response.header("Location")).isNotNull()
+          () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value()),
+          () -> assertThat(response.header("Location")).isNotNull()
         );
     }
 
@@ -63,20 +64,20 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String token = getTokenWithLogin(loginMemberRequest);
 
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
-            token, bookRegisterRequest);
+          token, bookRegisterRequest);
 
         String[] locations = bookRegisterResponse.header("Location").split("/");
         long bookId = Long.parseLong(locations[locations.length - 1]);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
-            clientPassword);
+          clientPassword);
         String clientToken = getTokenWithLogin(clientLoginRequest);
 
         // when
         ExtractableResponse<Response> response = postWithToken("/api/books/" + bookId, clientToken,
-            clientEmail);
+          clientEmail);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -98,21 +99,21 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String token = getTokenWithLogin(loginMemberRequest);
 
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
-            token, bookRegisterRequest);
+          token, bookRegisterRequest);
 
         String[] locations = bookRegisterResponse.header("Location").split("/");
         long bookId = Long.parseLong(locations[locations.length - 1]);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
-            clientPassword);
+          clientPassword);
         String clientToken = getTokenWithLogin(clientLoginRequest);
 
         // when
         postWithToken("/api/books/" + bookId, clientToken, clientEmail);
         ExtractableResponse<Response> response = postWithToken(
-            "/api/books/" + bookId + "/rents", token, email);
+          "/api/books/" + bookId + "/rents", token, email);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -134,15 +135,15 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String token = getTokenWithLogin(loginMemberRequest);
 
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
-            token, bookRegisterRequest);
+          token, bookRegisterRequest);
 
         String[] locations = bookRegisterResponse.header("Location").split("/");
         long bookId = Long.parseLong(locations[locations.length - 1]);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
-            clientPassword);
+          clientPassword);
         String clientToken = getTokenWithLogin(clientLoginRequest);
 
         // when
@@ -168,7 +169,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String token = getTokenWithLogin(loginMemberRequest);
 
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books/", token, bookRegisterRequest);
 
         String[] locations = bookRegisterResponse.header("Location").split("/");
@@ -179,11 +180,11 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         // then
         BookResponse expected = new BookResponse(nickname, "책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         BookResponse actual = response.body().as(BookResponse.class);
 
         assertThat(actual).usingRecursiveComparison()
-            .isEqualTo(expected);
+          .isEqualTo(expected);
     }
 
     @Test
@@ -200,11 +201,11 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String token = getTokenWithLogin(loginMemberRequest);
 
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         postWithToken("/api/books/", token, bookRegisterRequest);
 
         BookRegisterRequest bookRegisterRequest2 = new BookRegisterRequest("책 제목2", "image_url2",
-            "책 상세 메세지2", "책 위치2");
+          "책 상세 메세지2", "책 위치2");
         postWithToken("/api/books/", token, bookRegisterRequest2);
 
         // when
@@ -212,15 +213,15 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         // then
         List<BookResponse> expected = List.of(
-            new BookResponse(nickname, "책 제목", "image_url",
-                "책 상세 메세지", "책 위치"),
-            new BookResponse(nickname, "책 제목2", "image_url2",
-                "책 상세 메세지2", "책 위치2"));
+          new BookResponse(nickname, "책 제목", "image_url",
+            "책 상세 메세지", "책 위치"),
+          new BookResponse(nickname, "책 제목2", "image_url2",
+            "책 상세 메세지2", "책 위치2"));
 
         List<BookResponse> actual = response.body().jsonPath().getList(".", BookResponse.class);
 
         assertThat(actual).usingRecursiveComparison()
-            .isEqualTo(expected);
+          .isEqualTo(expected);
     }
 
     @Test
@@ -241,15 +242,15 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String token = getTokenWithLogin(loginMemberRequest);
 
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
-            token, bookRegisterRequest);
+          token, bookRegisterRequest);
 
         String[] locations = bookRegisterResponse.header("Location").split("/");
         long bookId = Long.parseLong(locations[locations.length - 1]);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
-            clientPassword);
+          clientPassword);
         getTokenWithLogin(clientLoginRequest);
 
         // when
@@ -257,9 +258,38 @@ public class BookAcceptanceTest extends AcceptanceTest {
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
+    @Test
+    @DisplayName("BookUpdateRequest, bookId, token을 받아 책의 정보를 수정한다.")
+    void update() {
+        // given
+        String email = "beomWhale@naver.com";
+        String password = "Password";
+        MemberSignUpRequest signUpRequest = new MemberSignUpRequest(email, "beom", password);
+        post("/api/members", signUpRequest);
+
+        LoginMemberRequest loginMemberRequest = new LoginMemberRequest(email, password);
+        String token = getTokenWithLogin(loginMemberRequest);
+
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
+          token, bookRegisterRequest);
+
+        String[] locations = bookRegisterResponse.header("Location").split("/");
+        long bookId = Long.parseLong(locations[locations.length - 1]);
+
+        // when
+        BookUpdateRequest bookUpdateRequest = new BookUpdateRequest("수정장소", "수정 상세 메세지");
+        ExtractableResponse<Response> response = putWithToken(
+          "/api/books/me/" + bookId, token, bookUpdateRequest);
+
+        // then
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
     private String getTokenWithLogin(LoginMemberRequest loginMemberRequest) {
         LoginResponse loginResponse = post("/api/auth/login", loginMemberRequest).body()
-            .as(LoginResponse.class);
+          .as(LoginResponse.class);
         return loginResponse.getAccessToken();
     }
 }

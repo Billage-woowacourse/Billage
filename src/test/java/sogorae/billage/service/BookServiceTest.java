@@ -2,6 +2,7 @@ package sogorae.billage.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
 
@@ -16,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
+import sogorae.billage.dto.BookUpdateRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.exception.BookNotFoundException;
+import sogorae.billage.service.dto.ServiceBookUpdateRequest;
 
 @SpringBootTest
 @Transactional
@@ -229,5 +232,33 @@ class BookServiceTest {
 
         // then
         assertThat(foundBook.getIsActive()).isFalse();
+    }
+
+    @Test
+    @DisplayName("오너 email과 BookUpdateInfoRequest를 입력 받아 책의 정보를 수정한다.")
+    void updateInformation() {
+        // given
+        String email = "beomWhale@naver.com";
+        MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
+        memberService.save(request);
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        Long bookId = bookService.register(bookRegisterRequest, email);
+
+        // when
+        String location = "위치";
+        String detailMessage = "상세 메세지";
+        BookUpdateRequest bookUpdateRequest = new BookUpdateRequest(location, detailMessage);
+        ServiceBookUpdateRequest serviceBookUpdateRequest = ServiceBookUpdateRequest.from(
+          bookUpdateRequest, bookId,
+          email);
+        bookService.updateInformation(serviceBookUpdateRequest);
+
+        // then
+        Book foundBook = bookService.findById(bookId);
+        assertAll(
+          () -> assertThat(foundBook.getLocation()).isEqualTo(location),
+          () -> assertThat(foundBook.getDetailMessage()).isEqualTo(detailMessage)
+        );
     }
 }
