@@ -15,7 +15,9 @@ import sogorae.auth.dto.LoginMember;
 import sogorae.auth.support.AuthenticationPrincipal;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
+import sogorae.billage.dto.BookUpdateRequest;
 import sogorae.billage.service.BookService;
+import sogorae.billage.service.dto.ServiceBookUpdateRequest;
 
 @RestController
 @RequestMapping("/api/books")
@@ -53,6 +55,14 @@ public class BookController {
         bookService.returning(bookId, loginMember.getEmail());
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/me/{bookId}")
+    public ResponseEntity<BookResponse> update(@PathVariable Long bookId, BookUpdateRequest request, @AuthenticationPrincipal LoginMember loginMember) {
+        bookService.updateInformation(ServiceBookUpdateRequest.from(request, bookId,
+          loginMember.getEmail()));
+        return ResponseEntity.ok().build();
+    }
+
 
     @DeleteMapping("/{bookId}")
     public ResponseEntity<BookResponse> delete(@PathVariable Long bookId, @AuthenticationPrincipal LoginMember loginMember) {

@@ -12,6 +12,7 @@ import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
 import sogorae.billage.dto.BookRegisterRequest;
+import sogorae.billage.dto.BookUpdateRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 
 public class BookAcceptanceTest extends AcceptanceTest {
@@ -181,6 +182,35 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         // when
         ExtractableResponse<Response> response = deleteWithToken("/api/books/" + bookId, token, email);
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+    }
+
+    @Test
+    @DisplayName("BookUpdateRequest, bookId, token을 받아 책의 정보를 수정한다.")
+    void update() {
+        // given
+        String email = "beomWhale@naver.com";
+        String password = "Password";
+        MemberSignUpRequest signUpRequest = new MemberSignUpRequest(email, "beom", password);
+        post("/api/members", signUpRequest);
+
+        LoginMemberRequest loginMemberRequest = new LoginMemberRequest(email, password);
+        String token = getTokenWithLogin(loginMemberRequest);
+
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
+          token, bookRegisterRequest);
+
+        String[] locations = bookRegisterResponse.header("Location").split("/");
+        long bookId = Long.parseLong(locations[locations.length - 1]);
+
+        // when
+        BookUpdateRequest bookUpdateRequest = new BookUpdateRequest("수정장소", "수정 상세 메세지");
+        ExtractableResponse<Response> response = putWithToken(
+          "/api/books/me/" + bookId, token, bookUpdateRequest);
+
+        // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
