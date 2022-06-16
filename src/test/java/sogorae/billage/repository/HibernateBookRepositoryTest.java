@@ -1,6 +1,6 @@
 package sogorae.billage.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.*;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
+import sogorae.billage.exception.BookNotFoundException;
 
 @SpringBootTest
 @Transactional
@@ -44,5 +45,14 @@ class HibernateBookRepositoryTest {
 
         // then
         assertThat(foundBook.getId()).isEqualTo(savedId);
+    }
+
+    @Test
+    @DisplayName("없는 BookId를 입력 받아 조회할 경우 예외가 발생한다.")
+    void findByIdExceptionNotFound() {
+        // when, then
+        assertThatThrownBy(() -> bookRepository.findById(99L))
+            .isInstanceOf(BookNotFoundException.class)
+            .hasMessage("해당 책이 존재하지 않습니다.");
     }
 }
