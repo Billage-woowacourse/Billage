@@ -1,6 +1,9 @@
 package sogorae.billage.controller;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sogorae.auth.dto.LoginMember;
 import sogorae.auth.support.AuthenticationPrincipal;
+import sogorae.billage.domain.Book;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.service.BookService;
@@ -44,5 +48,13 @@ public class BookController {
     public ResponseEntity<BookResponse> findOne(@PathVariable Long bookId) {
         BookResponse response = BookResponse.from(bookService.findById(bookId));
         return ResponseEntity.ok(response);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BookResponse>> findAll() {
+        List<BookResponse> bookResponses = bookService.findAll().stream()
+            .map(BookResponse::from)
+            .collect(Collectors.toList());
+        return ResponseEntity.ok(bookResponses);
     }
 }

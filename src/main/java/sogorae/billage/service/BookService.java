@@ -1,5 +1,7 @@
 package sogorae.billage.service;
 
+import java.util.List;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,5 +40,9 @@ public class BookService {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
         book.allowRent(member);
+    }
+
+    public List<Book> findAll() {
+        return bookRepository.findAll();
     }
 }
