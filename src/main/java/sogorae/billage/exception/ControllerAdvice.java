@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import sogorae.auth.exception.InvalidTokenException;
 import sogorae.auth.exception.LoginFailException;
 
-@RestControllerAdvice
+//@RestControllerAdvice
 public class ControllerAdvice {
 
     @ExceptionHandler({LoginFailException.class, MemberNotFoundException.class,
