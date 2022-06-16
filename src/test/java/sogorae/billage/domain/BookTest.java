@@ -139,4 +139,49 @@ public class BookTest {
           .isInstanceOf(BookInvalidException.class)
           .hasMessage("반납할 수 있는 상태가 아닙니다.");
     }
+
+    @Test
+    @DisplayName("오너가 책 active를 false로 변환한다.")
+    void changeToInactive() {
+        // given
+        Member owner = new Member("email@naver.com", "nickname", "password");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
+
+        // when
+        book.changeToInactive(owner);
+        Boolean result = book.getIsActive();
+
+        // then
+        assertThat(result).isFalse();
+    }
+
+    @Test
+    @DisplayName("오너가 아닌 사용자가 책 active를 false로 변환할 시, 예외가 발생한다..")
+    void changeToInactiveExceptionNotOwner() {
+        // given
+        Member owner = new Member("email@naver.com", "nickname", "password");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Member client = new Member("client@naver.com", "client", "password");
+
+        // when
+        assertThatThrownBy(() -> book.changeToInactive(client))
+          .isInstanceOf(BookInvalidException.class)
+          .hasMessage("책을 제거할 권한이 없습니다.");
+    }
+
+    @Test
+    @DisplayName("빌림 상태의 책의 active를 false로 변환할 시, 예외가 발생한다..")
+    void changeToInactiveExceptionStatusUnavailable() {
+        // given
+        Member owner = new Member("email@naver.com", "nickname", "password");
+        Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
+        Member client = new Member("client@naver.com", "client", "password");
+        book.requestRent(client);
+        book.allowRent(owner);
+
+        // when
+        assertThatThrownBy(() -> book.changeToInactive(owner))
+          .isInstanceOf(BookInvalidException.class)
+          .hasMessage("책을 제거할 수 있는 상태가 아닙니다.");
+    }
 }

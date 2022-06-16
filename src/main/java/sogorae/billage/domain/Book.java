@@ -30,7 +30,8 @@ public class Book {
 
     @Enumerated(EnumType.STRING)
     private Status status;
-    private boolean isActive;
+
+    private Boolean isActive;
 
     public Book(Member member, String title, String imageUrl, String detailMessage,
       String location) {
@@ -78,6 +79,20 @@ public class Book {
         }
         if (!(status == Status.UNAVAILABLE)) {
             throw new BookInvalidException("반납할 수 있는 상태가 아닙니다.");
+        }
+    }
+
+    public void changeToInactive(Member owner) {
+        validChangeToInactive(owner);
+        this.isActive = false;
+    }
+
+    private void validChangeToInactive(Member owner) {
+        if (noneMatchOwner(owner)) {
+            throw new BookInvalidException("책을 제거할 권한이 없습니다.");
+        }
+        if (status == Status.UNAVAILABLE) {
+            throw new BookInvalidException("책을 제거할 수 있는 상태가 아닙니다.");
         }
     }
 }

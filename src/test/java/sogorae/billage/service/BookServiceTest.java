@@ -206,4 +206,28 @@ class BookServiceTest {
         // then
         assertThat(foundBook.isRentAvailable()).isTrue();
     }
+
+    @Test
+    @DisplayName("사용자 email과 bookId를 입력 받아, 책을 반납한다.")
+    void changeToInactive() {
+        // given
+        String ownerEmail = "beomWhale@naver.com";
+        MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
+        memberService.save(ownerRequest);
+        String clientEmail = "sojukang@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "sojukang", "Password");
+        memberService.save(clientRequest);
+
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        Long savedId = bookService.register(bookRegisterRequest, ownerEmail);
+
+
+        // when
+        bookService.changeToInactive(savedId, ownerEmail);
+        Book foundBook = bookService.findById(savedId);
+
+        // then
+        assertThat(foundBook.getIsActive()).isFalse();
+    }
 }
