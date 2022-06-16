@@ -55,4 +55,8 @@ public class Book {
     public boolean isRentAvailable() {
         return status.isAvailable();
     }
+
+    public boolean noneMatchOwner(Member member) {
+        return !this.member.isSameNickname(member);
+    }
 }

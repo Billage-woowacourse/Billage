@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
+import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.repository.BookRepository;
 import sogorae.billage.repository.MemberRepository;
 
@@ -23,7 +24,6 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-
     public void requestRent(Long bookId, String email) {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
@@ -32,5 +32,14 @@ public class BookService {
 
     public Book findById(Long bookId) {
         return bookRepository.findById(bookId);
+    }
+
+    public void allowRent(Long bookId, String email) {
+        Member member = memberRepository.findByEmail(email);
+        Book book = bookRepository.findById(bookId);
+        if (book.noneMatchOwner(member)) {
+            throw new BookInvalidException("책 대여 요청을 수락할 권한이 없습니다.");
+        }
+        book.allowRent();
     }
 }
