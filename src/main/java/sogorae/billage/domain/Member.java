@@ -32,6 +32,10 @@ public class Member {
         this.password = new Password(password);
     }
 
+    public boolean isSameNickname(Member member) {
+        return nickname.equals(member.nickname);
+    }
+
     public String getEmail() {
         return email.getEmail();
     }
