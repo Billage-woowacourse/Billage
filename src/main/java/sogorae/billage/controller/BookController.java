@@ -34,6 +34,12 @@ public class BookController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/{bookId}/rents")
+    public ResponseEntity<Void> allowRent(@PathVariable Long bookId, @AuthenticationPrincipal LoginMember loginMember) {
+        bookService.allowRent(bookId, loginMember.getEmail());
+        return ResponseEntity.ok().build();
+    }
+
     @GetMapping("/{bookId}")
     public ResponseEntity<BookResponse> findOne(@PathVariable Long bookId) {
         BookResponse response = BookResponse.from(bookService.findById(bookId));

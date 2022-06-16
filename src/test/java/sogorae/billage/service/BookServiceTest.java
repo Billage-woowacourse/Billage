@@ -1,20 +1,24 @@
 package sogorae.billage.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.transaction.annotation.Transactional;
-
 import sogorae.billage.domain.Book;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
+import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.exception.BookNotFoundException;
 
 @SpringBootTest
 @Transactional
+@DirtiesContext(classMode = ClassMode.BEFORE_EACH_TEST_METHOD)
 class BookServiceTest {
 
     @Autowired
@@ -31,7 +35,7 @@ class BookServiceTest {
         MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
         memberService.save(request);
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
 
         // when
         Long bookId = bookService.register(bookRegisterRequest, email);
@@ -48,11 +52,11 @@ class BookServiceTest {
         MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
         String clientEmail = "sojukang@naver.com";
         MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "sojukang",
-            "Password");
+          "Password");
         memberService.save(request);
         memberService.save(clientRequest);
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
 
         // when
@@ -71,13 +75,58 @@ class BookServiceTest {
         MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
         memberService.save(request);
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+          "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
 
         // when, then
         assertThatThrownBy(() -> bookService.requestRent(bookId, email))
-            .isInstanceOf(IllegalArgumentException.class)
-            .hasMessage("대여 요청을 할 수 없습니다.");
+          .isInstanceOf(IllegalArgumentException.class)
+          .hasMessage("대여 요청을 할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("bookId와 사용자 email을 입력 받아, 대여 요청을 수락한다.")
+    void allowRent() {
+        // given
+        String ownerEmail = "beomWhale@naver.com";
+        MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
+        memberService.save(ownerRequest);
+        String clientEmail = "sojukang@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "sojukang", "Password");
+        memberService.save(clientRequest);
+
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
+
+        // when
+        bookService.requestRent(bookId, clientEmail);
+        bookService.allowRent(bookId, ownerEmail);
+
+        // then
+        Book book = bookService.findById(bookId);
+        assertThat(book.isRentAvailable()).isFalse();
+    }
+
+    @Test
+    @DisplayName("대여 요청 수락 시, owner가 아니면 예외가 발생한다.")
+    void allowRentExceptionNotAuthority() {
+        // given
+        String ownerEmail = "beomWhale@naver.com";
+        MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
+        memberService.save(ownerRequest);
+        String clientEmail = "sojukang@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "sojukang", "Password");
+        memberService.save(clientRequest);
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
+
+        // when
+        bookService.requestRent(bookId, clientEmail);
+        assertThatThrownBy(() -> bookService.allowRent(bookId, clientEmail))
+          .isInstanceOf(BookInvalidException.class)
+          .hasMessage("책 대여 요청을 수락할 권한이 없습니다.");
     }
 
     @Test
