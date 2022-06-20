@@ -11,6 +11,7 @@ import sogorae.billage.domain.Book;
 @AllArgsConstructor
 public class BookResponse {
 
+    private Long id;
     private String nickname;
     private String title;
     private String imageUrl;
@@ -18,7 +19,7 @@ public class BookResponse {
     private String location;
 
     public static BookResponse from(Book book) {
-        return new BookResponse(book.getMember().getNickname(), book.getTitle(),
+        return new BookResponse(book.getId(), book.getMember().getNickname(), book.getTitle(),
             book.getImageUrl(), book.getDetailMessage(), book.getLocation());
     }
 }
