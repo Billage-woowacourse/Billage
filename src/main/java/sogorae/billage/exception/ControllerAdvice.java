@@ -1,6 +1,7 @@
 package sogorae.billage.exception;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -11,7 +12,7 @@ import sogorae.auth.exception.LoginFailException;
 public class ControllerAdvice {
 
     @ExceptionHandler({LoginFailException.class, MemberNotFoundException.class,
-      IllegalArgumentException.class, MemberDuplicationException.class})
+      IllegalArgumentException.class, MemberDuplicationException.class, MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(RuntimeException e) {
         return new ErrorResponse(e.getMessage());
