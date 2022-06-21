@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -15,11 +14,11 @@ import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
-
 import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
+import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.exception.BookInvalidException;
@@ -309,5 +308,68 @@ class BookServiceTest {
           () -> assertThat(foundBook.getLocation()).isEqualTo(location),
           () -> assertThat(foundBook.getDetailMessage()).isEqualTo(detailMessage)
         );
+    }
+
+    @Test
+    @DisplayName("오너 email을 입력 받아, 빌림 요청 상태의 책들을 조회한다.")
+    void findAllByAvailableStatus() {
+        // given
+        String email = "beomWhale@naver.com";
+        MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
+        memberService.save(request);
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        bookService.register(bookRegisterRequest, email);
+
+        // when
+        List<BookResponse> books = bookService.findAllByPendingStatus(email);
+
+        // then
+        assertThat(books.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("오너 email을 입력 받아, 빌림 요청 상태의 책들을 조회한다.")
+    void findAllByPendingStatus() {
+        // given
+        String email = "beomWhale@naver.com";
+        MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
+        memberService.save(request);
+        String clientEmail = "client@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "client", "Password");
+        memberService.save(clientRequest);
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        Long bookId = bookService.register(bookRegisterRequest, email);
+        bookService.requestRent(bookId, clientEmail);
+
+        // when
+        List<BookResponse> books = bookService.findAllByPendingStatus(email);
+
+        // then
+        assertThat(books.size()).isEqualTo(1);
+    }
+    
+    @Test
+    @DisplayName("오너 email을 입력 받아, 빌림 상태의 책들을 조회한다.")
+    void findAllByUnAvailableStatus() {
+        // given
+        String email = "beomWhale@naver.com";
+        MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
+        memberService.save(request);
+        String clientEmail = "client@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "client", "Password");
+        memberService.save(clientRequest);
+        BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
+          "책 상세 메세지", "책 위치");
+        Long bookId = bookService.register(bookRegisterRequest, email);
+        bookService.requestRent(bookId, clientEmail);
+        bookService.allowOrDeny(bookId, email, AllowOrDeny.ALLOW);
+
+        // when
+        List<BookResponse> books = bookService.findAllByUnAvailableStatus(email);
+
+        // then
+        assertThat(books.size()).isEqualTo(1);
     }
 }
