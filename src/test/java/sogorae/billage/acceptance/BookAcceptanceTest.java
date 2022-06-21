@@ -69,8 +69,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
             token, bookRegisterRequest);
 
-        String[] locations = bookRegisterResponse.header("Location").split("/");
-        long bookId = Long.parseLong(locations[locations.length - 1]);
+        long bookId = getBookId(bookRegisterResponse);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
             clientPassword);
@@ -104,8 +103,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
             token, bookRegisterRequest);
 
-        String[] locations = bookRegisterResponse.header("Location").split("/");
-        long bookId = Long.parseLong(locations[locations.length - 1]);
+        long bookId = getBookId(bookRegisterResponse);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
             clientPassword);
@@ -183,8 +181,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
             token, bookRegisterRequest);
 
-        String[] locations = bookRegisterResponse.header("Location").split("/");
-        long bookId = Long.parseLong(locations[locations.length - 1]);
+        long bookId = getBookId(bookRegisterResponse);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
             clientPassword);
@@ -218,19 +215,23 @@ public class BookAcceptanceTest extends AcceptanceTest {
             "책 상세 메세지", "책 위치");
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books/", token, bookRegisterRequest);
 
-        String[] locations = bookRegisterResponse.header("Location").split("/");
-        long bookId = Long.parseLong(locations[locations.length - 1]);
+        long bookId = getBookId(bookRegisterResponse);
 
         // when
         ExtractableResponse<Response> response = get("/api/books/" + bookId);
 
         // then
-        BookResponse expected = new BookResponse(nickname, "책 제목", "image_url",
+        BookResponse expected = new BookResponse(bookId, nickname, "책 제목", "image_url",
             "책 상세 메세지", "책 위치");
         BookResponse actual = response.body().as(BookResponse.class);
 
         assertThat(actual).usingRecursiveComparison()
             .isEqualTo(expected);
+    }
+
+    private long getBookId(ExtractableResponse<Response> bookRegisterResponse) {
+        String[] locations = bookRegisterResponse.header("Location").split("/");
+        return Long.parseLong(locations[locations.length - 1]);
     }
 
     @Test
@@ -248,20 +249,20 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
             "책 상세 메세지", "책 위치");
-        postWithToken("/api/books/", token, bookRegisterRequest);
+        Long bookId1 = getBookId(postWithToken("/api/books/", token, bookRegisterRequest));
 
         BookRegisterRequest bookRegisterRequest2 = new BookRegisterRequest("책 제목2", "image_url2",
             "책 상세 메세지2", "책 위치2");
-        postWithToken("/api/books/", token, bookRegisterRequest2);
+        Long bookId2 = getBookId(postWithToken("/api/books/", token, bookRegisterRequest2));
 
         // when
         ExtractableResponse<Response> response = get("/api/books");
 
         // then
         List<BookResponse> expected = List.of(
-            new BookResponse(nickname, "책 제목", "image_url",
+            new BookResponse(bookId1, nickname, "책 제목", "image_url",
                 "책 상세 메세지", "책 위치"),
-            new BookResponse(nickname, "책 제목2", "image_url2",
+            new BookResponse(bookId2, nickname, "책 제목2", "image_url2",
                 "책 상세 메세지2", "책 위치2"));
 
         List<BookResponse> actual = response.body().jsonPath().getList(".", BookResponse.class);
@@ -292,8 +293,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> bookRegisterResponse = postWithToken("/api/books",
             token, bookRegisterRequest);
 
-        String[] locations = bookRegisterResponse.header("Location").split("/");
-        long bookId = Long.parseLong(locations[locations.length - 1]);
+        long bookId = getBookId(bookRegisterResponse);
 
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
             clientPassword);
