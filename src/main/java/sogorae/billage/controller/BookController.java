@@ -81,10 +81,22 @@ public class BookController {
         return ResponseEntity.ok().build();
     }
 
-
     @DeleteMapping("/{bookId}")
     public ResponseEntity<BookResponse> delete(@PathVariable Long bookId, @AuthenticationPrincipal LoginMember loginMember) {
         bookService.changeToInactive(bookId, loginMember.getEmail());
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/pending")
+    public ResponseEntity<List<BookResponse>> findAllByPending(@AuthenticationPrincipal LoginMember loginMember) {
+        List<BookResponse> bookResponses = bookService.findAllByPendingStatus(
+          loginMember.getEmail());
+        return ResponseEntity.ok(bookResponses);
+    }
+
+    @GetMapping("/unavailable")
+    public ResponseEntity<List<BookResponse>> findAllByUnAvailable(@AuthenticationPrincipal LoginMember loginMember) {
+        List<BookResponse> bookResponses = bookService.findAllByUnAvailableStatus(loginMember.getEmail());
+        return ResponseEntity.ok(bookResponses);
     }
 }

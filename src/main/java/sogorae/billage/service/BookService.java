@@ -2,6 +2,7 @@ package sogorae.billage.service;
 
 import java.util.List;
 
+import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,7 +10,9 @@ import lombok.RequiredArgsConstructor;
 import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
+import sogorae.billage.domain.Status;
 import sogorae.billage.dto.BookRegisterRequest;
+import sogorae.billage.dto.BookResponse;
 import sogorae.billage.repository.BookRepository;
 import sogorae.billage.repository.MemberRepository;
 import sogorae.billage.service.dto.ServiceBookUpdateRequest;
@@ -79,5 +82,21 @@ public class BookService {
         Book book = bookRepository.findById(serviceBookUpdateRequest.getBookId());
         book.updateInformation(member, serviceBookUpdateRequest.getLocation(),
           serviceBookUpdateRequest.getDetailMessage());
+    }
+
+    public List<BookResponse> findAllByPendingStatus(String email) {
+        return findAllByStatus(email, Status.PENDING);
+    }
+
+    public List<BookResponse> findAllByUnAvailableStatus(String email) {
+        return findAllByStatus(email, Status.UNAVAILABLE);
+    }
+
+    private List<BookResponse> findAllByStatus(String email, Status status) {
+        Member member = memberRepository.findByEmail(email);
+        List<Book> books = bookRepository.findAllByStatus(status, member);
+        return books.stream()
+          .map(BookResponse::from)
+          .collect(Collectors.toList());
     }
 }
