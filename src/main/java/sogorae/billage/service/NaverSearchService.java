@@ -29,6 +29,7 @@ public class NaverSearchService {
         URI targetUrl = UriComponentsBuilder
           .fromUriString(baseUrl)
           .queryParam("query", keyword)
+          .queryParam("display", 20)
           .build()
           .encode(StandardCharsets.UTF_8)
           .toUri();

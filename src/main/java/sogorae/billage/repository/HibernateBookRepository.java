@@ -54,5 +54,13 @@ public class HibernateBookRepository implements BookRepository {
         return query.getResultList();
     }
 
+    @Override
+    public List<Book> findAllByMember(Member member) {
+        String jpql = "SELECT b from Book b WHERE b.member = :member";
+        TypedQuery<Book> query = em.createQuery(jpql, Book.class);
+        query.setParameter("member", member);
+        return query.getResultList();
+    }
+
 
 }

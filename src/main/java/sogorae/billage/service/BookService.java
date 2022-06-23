@@ -99,4 +99,12 @@ public class BookService {
           .map(BookResponse::from)
           .collect(Collectors.toList());
     }
+
+    public List<BookResponse> findAllByMember(String email) {
+        Member member = memberRepository.findByEmail(email);
+        List<Book> books = bookRepository.findAllByMember(member);
+        return books.stream()
+          .map(BookResponse::from)
+          .collect(Collectors.toList());
+    }
 }
