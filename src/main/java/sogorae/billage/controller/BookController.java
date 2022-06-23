@@ -99,4 +99,10 @@ public class BookController {
         List<BookResponse> bookResponses = bookService.findAllByUnAvailableStatus(loginMember.getEmail());
         return ResponseEntity.ok(bookResponses);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<BookResponse>> findAllByMember(@AuthenticationPrincipal LoginMember loginMember) {
+        List<BookResponse> bookResponses = bookService.findAllByMember(loginMember.getEmail());
+        return ResponseEntity.ok(bookResponses);
+    }
 }

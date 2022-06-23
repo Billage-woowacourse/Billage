@@ -15,4 +15,6 @@ public interface BookRepository {
     List<Book> findAll();
 
     List<Book> findAllByStatus(Status status, Member member);
+
+    List<Book> findAllByMember(Member member);
 }
