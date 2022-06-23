@@ -61,8 +61,10 @@ public class BookService {
         book.denyRent(member);
     }
 
-    public List<Book> findAll() {
-        return bookRepository.findAll();
+    public List<BookResponse> findAll() {
+        return bookRepository.findAll().stream()
+          .map(BookResponse::from)
+          .collect(Collectors.toList());
     }
 
     public void returning(Long bookId, String email) {

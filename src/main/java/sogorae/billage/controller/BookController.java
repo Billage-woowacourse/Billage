@@ -61,9 +61,7 @@ public class BookController {
 
     @GetMapping
     public ResponseEntity<List<BookResponse>> findAll() {
-        List<BookResponse> bookResponses = bookService.findAll().stream()
-            .map(BookResponse::from)
-            .collect(Collectors.toList());
+        List<BookResponse> bookResponses = bookService.findAll();
         return ResponseEntity.ok(bookResponses);
     }
 
