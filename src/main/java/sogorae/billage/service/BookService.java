@@ -10,11 +10,14 @@ import lombok.RequiredArgsConstructor;
 import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
+import sogorae.billage.domain.Rent;
+import sogorae.billage.domain.RentStatus;
 import sogorae.billage.domain.Status;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.repository.BookRepository;
 import sogorae.billage.repository.MemberRepository;
+import sogorae.billage.repository.RentRepository;
 import sogorae.billage.service.dto.ServiceBookUpdateRequest;
 
 @Service
@@ -24,6 +27,7 @@ public class BookService {
 
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
+    private final RentRepository rentRepository;
 
     public Long register(BookRegisterRequest bookRegisterRequest, String email) {
         Member member = memberRepository.findByEmail(email);
@@ -32,9 +36,11 @@ public class BookService {
     }
 
     public void requestRent(Long bookId, String email) {
-        Member member = memberRepository.findByEmail(email);
+        Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.requestRent(member);
+        book.requestRent(client);
+        Rent rent = new Rent(book.getMember(), client, book, RentStatus.REQUEST);
+        rentRepository.save(rent);
     }
 
     public Book findById(Long bookId) {
@@ -50,15 +56,19 @@ public class BookService {
     }
 
     private void allowRent(Long bookId, String email) {
-        Member member = memberRepository.findByEmail(email);
+        Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.allowRent(member);
+        book.allowRent(client);
+        Rent rent = new Rent(book.getMember(), client, book, RentStatus.ALLOW);
+        rentRepository.save(rent);
     }
 
     private void denyRent(Long bookId, String email) {
-        Member member = memberRepository.findByEmail(email);
+        Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.denyRent(member);
+        book.denyRent(client);
+        Rent rent = new Rent(book.getMember(), client, book, RentStatus.REJECT);
+        rentRepository.save(rent);
     }
 
     public List<BookResponse> findAll() {
@@ -68,9 +78,11 @@ public class BookService {
     }
 
     public void returning(Long bookId, String email) {
-        Member member = memberRepository.findByEmail(email);
+        Member owner = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.returning(member);
+        book.returning(owner);
+        Rent rent = new Rent(owner, book, RentStatus.RETURNING);
+        rentRepository.save(rent);
     }
 
     public void changeToInactive(Long bookId, String email) {
