@@ -14,6 +14,7 @@ import io.restassured.response.Response;
 import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
+import sogorae.billage.domain.Status;
 import sogorae.billage.dto.AllowRentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
@@ -222,7 +223,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         // then
         BookResponse expected = new BookResponse(bookId, nickname, "책 제목", "image_url",
-            "책 상세 메세지", "책 위치");
+            "책 상세 메세지", "책 위치", Status.AVAILABLE.name());
         BookResponse actual = response.body().as(BookResponse.class);
 
         assertThat(actual).usingRecursiveComparison()
@@ -261,9 +262,9 @@ public class BookAcceptanceTest extends AcceptanceTest {
         // then
         List<BookResponse> expected = List.of(
             new BookResponse(bookId1, nickname, "책 제목", "image_url",
-                "책 상세 메세지", "책 위치"),
+                "책 상세 메세지", "책 위치", Status.AVAILABLE.name()),
             new BookResponse(bookId2, nickname, "책 제목2", "image_url2",
-                "책 상세 메세지2", "책 위치2"));
+                "책 상세 메세지2", "책 위치2", Status.AVAILABLE.name()));
 
         List<BookResponse> actual = response.body().jsonPath().getList(".", BookResponse.class);
 

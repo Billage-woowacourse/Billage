@@ -223,7 +223,7 @@ class BookServiceTest {
         bookService.register(request2, signUpRequest.getEmail());
 
         // when
-        List<Book> books = bookService.findAll();
+        List<BookResponse> books = bookService.findAll();
 
         // then
         Assertions.assertAll(
@@ -317,9 +317,13 @@ class BookServiceTest {
         String email = "beomWhale@naver.com";
         MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
         memberService.save(request);
+        String clientEmail = "client@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "client", "Password");
+        memberService.save(clientRequest);
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
           "책 상세 메세지", "책 위치");
-        bookService.register(bookRegisterRequest, email);
+        Long bookId = bookService.register(bookRegisterRequest, email);
+        bookService.requestRent(bookId, clientEmail);
 
         // when
         List<BookResponse> books = bookService.findAllByPendingStatus(email);

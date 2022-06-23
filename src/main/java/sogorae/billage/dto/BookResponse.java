@@ -17,9 +17,10 @@ public class BookResponse {
     private String imageUrl;
     private String detailMessage;
     private String location;
+    private String status;
 
     public static BookResponse from(Book book) {
         return new BookResponse(book.getId(), book.getMember().getNickname(), book.getTitle(),
-            book.getImageUrl(), book.getDetailMessage(), book.getLocation());
+            book.getImageUrl(), book.getDetailMessage(), book.getLocation(), book.getStatus().name());
     }
 }
