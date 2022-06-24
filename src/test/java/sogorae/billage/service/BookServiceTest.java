@@ -101,7 +101,7 @@ class BookServiceTest {
         // when, then
         assertThatThrownBy(() -> bookService.requestLent(bookId, email))
           .isInstanceOf(IllegalArgumentException.class)
-          .hasMessage("대여 요청을 할 수 없습니다.");
+          .hasMessage("주인은 대여 요청할 수 없습니다.");
     }
 
     @Test
