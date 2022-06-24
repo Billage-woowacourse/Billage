@@ -21,6 +21,7 @@ import sogorae.billage.domain.Lent;
 import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookClientResponse;
+import sogorae.billage.dto.BookLentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
@@ -78,7 +79,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, email);
 
         // when
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
         Book book = bookService.findById(bookId);
         Lent lent = lentRepository.findByBook(book);
 
@@ -99,7 +100,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, email);
 
         // when, then
-        assertThatThrownBy(() -> bookService.requestLent(bookId, email))
+        assertThatThrownBy(() -> bookService.requestLent(bookId, email, "요청 메세지"))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("주인은 대여 요청할 수 없습니다.");
     }
@@ -120,7 +121,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
         bookService.allowOrDeny(bookId, ownerEmail, AllowOrDeny.ALLOW);
 
         // then
@@ -146,7 +147,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
         bookService.allowOrDeny(bookId, ownerEmail, AllowOrDeny.DENY);
 
         // then
@@ -169,7 +170,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
         assertThatThrownBy(() -> bookService.allowOrDeny(bookId, clientEmail, AllowOrDeny.ALLOW))
           .isInstanceOf(BookInvalidException.class)
           .hasMessage("책 대여 요청을 수락할 권한이 없습니다.");
@@ -190,7 +191,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
         assertThatThrownBy(() -> bookService.allowOrDeny(bookId, clientEmail, AllowOrDeny.DENY))
             .isInstanceOf(BookInvalidException.class)
             .hasMessage("책 대여 요청을 거절할 권한이 없습니다.");
@@ -259,7 +260,7 @@ class BookServiceTest {
           "책 상세 메세지", "책 위치");
         Long savedId = bookService.register(bookRegisterRequest, ownerEmail);
 
-        bookService.requestLent(savedId, clientEmail);
+        bookService.requestLent(savedId, clientEmail, "요청 메세지");
         bookService.allowOrDeny(savedId, ownerEmail, AllowOrDeny.ALLOW);
 
         // when
@@ -334,7 +335,7 @@ class BookServiceTest {
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
           "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
 
         // when
         List<BookResponse> books = bookService.findAllByPendingStatus(email);
@@ -356,7 +357,7 @@ class BookServiceTest {
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
           "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
 
         // when
         List<BookResponse> books = bookService.findAllByPendingStatus(email);
@@ -378,7 +379,7 @@ class BookServiceTest {
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
           "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
-        bookService.requestLent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail, "요청 메세지");
         bookService.allowOrDeny(bookId, email, AllowOrDeny.ALLOW);
 
         // when
@@ -406,8 +407,8 @@ class BookServiceTest {
           "책 상세 메세지2", "책 위치2");
         Long bookId1 = bookService.register(bookRegisterRequest1, email);
         Long bookId2 = bookService.register(bookRegisterRequest2, email);
-        bookService.requestLent(bookId1, clientEmail);
-        bookService.requestLent(bookId2, clientEmail);
+        bookService.requestLent(bookId1, clientEmail, "요청 메세지");
+        bookService.requestLent(bookId2, clientEmail, "요청 메세지");
         bookService.allowOrDeny(bookId2, email, AllowOrDeny.ALLOW);
 
         // when

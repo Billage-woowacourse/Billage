@@ -18,6 +18,7 @@ import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Status;
 import sogorae.billage.dto.AllowLentRequest;
 import sogorae.billage.dto.BookClientResponse;
+import sogorae.billage.dto.BookLentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
@@ -79,8 +80,9 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String clientToken = getTokenWithLogin(clientLoginRequest);
 
         // when
+        BookLentRequest bookLentRequest = new BookLentRequest("빌림 요청");
         ExtractableResponse<Response> response = postWithToken("/api/books/" + bookId, clientToken,
-            clientEmail);
+          bookLentRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
@@ -111,8 +113,8 @@ public class BookAcceptanceTest extends AcceptanceTest {
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
             clientPassword);
         String clientToken = getTokenWithLogin(clientLoginRequest);
-
-        postWithToken("/api/books/" + bookId, clientToken, clientEmail);
+        BookLentRequest bookLentRequest = new BookLentRequest("빌림 요청");
+        postWithToken("/api/books/" + bookId, clientToken, bookLentRequest);
 
         // when
         AllowLentRequest allowLentRequest = new AllowLentRequest("allow");
@@ -154,9 +156,9 @@ public class BookAcceptanceTest extends AcceptanceTest {
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
           clientPassword);
         String clientToken = getTokenWithLogin(clientLoginRequest);
-
-        postWithToken("/api/books/" + bookId1, clientToken, clientEmail);
-        postWithToken("/api/books/" + bookId2, clientToken, clientEmail);
+        BookLentRequest bookLentRequest = new BookLentRequest("빌림 요청");
+        postWithToken("/api/books/" + bookId1, clientToken, bookLentRequest);
+        postWithToken("/api/books/" + bookId2, clientToken, bookLentRequest);
 
         // when
         AllowLentRequest allowLentRequest = new AllowLentRequest("allow");
@@ -206,8 +208,8 @@ public class BookAcceptanceTest extends AcceptanceTest {
         LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
             clientPassword);
         String clientToken = getTokenWithLogin(clientLoginRequest);
-
-        postWithToken("/api/books/" + bookId, clientToken, clientEmail);
+        BookLentRequest bookLentRequest = new BookLentRequest("빌림 요청");
+        postWithToken("/api/books/" + bookId, clientToken, bookLentRequest);
 
         // when
         AllowLentRequest allowLentRequest = new AllowLentRequest("deny");
@@ -247,7 +249,8 @@ public class BookAcceptanceTest extends AcceptanceTest {
         String clientToken = getTokenWithLogin(clientLoginRequest);
 
         // when
-        postWithToken("/api/books/" + bookId, clientToken, clientEmail);
+        BookLentRequest bookLentRequest = new BookLentRequest("빌림 요청");
+        postWithToken("/api/books/" + bookId, clientToken, bookLentRequest);
 
         AllowLentRequest allowLentRequest = new AllowLentRequest("allow");
         postWithToken("/api/books/" + bookId + "/lents", token, allowLentRequest);

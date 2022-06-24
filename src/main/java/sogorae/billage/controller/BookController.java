@@ -18,6 +18,7 @@ import sogorae.auth.dto.LoginMember;
 import sogorae.auth.support.AuthenticationPrincipal;
 import sogorae.billage.dto.AllowLentRequest;
 import sogorae.billage.dto.BookClientResponse;
+import sogorae.billage.dto.BookLentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
@@ -40,8 +41,8 @@ public class BookController {
 
     @PostMapping("/{bookId}")
     public ResponseEntity<Void> requestLent(@PathVariable Long bookId,
-        @AuthenticationPrincipal LoginMember loginMember) {
-        bookService.requestLent(bookId, loginMember.getEmail());
+        @AuthenticationPrincipal LoginMember loginMember, @RequestBody BookLentRequest request) {
+        bookService.requestLent(bookId, loginMember.getEmail(), request.getRequestMessage());
         return ResponseEntity.ok().build();
     }
 

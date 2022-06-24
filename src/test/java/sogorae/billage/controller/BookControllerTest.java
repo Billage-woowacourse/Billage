@@ -12,6 +12,7 @@ import io.restassured.response.Response;
 import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
+import sogorae.billage.dto.BookLentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 
@@ -38,7 +39,8 @@ public class BookControllerTest extends AcceptanceTest {
         long bookId = Long.parseLong(locations[locations.length - 1]);
 
         // when
-        ExtractableResponse<Response> response = postWithToken("/api/books/" + bookId, token, email);
+        BookLentRequest bookLentRequest = new BookLentRequest("빌림 요청");
+        ExtractableResponse<Response> response = postWithToken("/api/books/" + bookId, token, bookLentRequest);
 
         Assertions.assertAll(
             () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),

@@ -36,11 +36,11 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void requestLent(Long bookId, String email) {
+    public void requestLent(Long bookId, String email, String requestMessage) {
         Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
         book.requestLent(client);
-        Lent lent = new Lent(book.getMember(), client, book, LentStatus.REQUEST);
+        Lent lent = new Lent(book.getMember(), client, book, LentStatus.REQUEST, requestMessage);
         lentRepository.save(lent);
     }
 
