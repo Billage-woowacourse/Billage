@@ -19,7 +19,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @AllArgsConstructor
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
-public class Rent {
+public class Lent {
 
     @Id
     @GeneratedValue
@@ -38,13 +38,21 @@ public class Rent {
     private Book book;
 
     @Enumerated(EnumType.STRING)
-    private RentStatus status;
+    private LentStatus status;
 
-    public Rent(Member owner, Member client, Book book, RentStatus status) {
+    public Lent(Member owner, Member client, Book book, LentStatus status) {
         this(null, null, owner, client, book, status);
     }
 
-    public Rent(Member owner, Book book, RentStatus status) {
+    public Lent(Member owner, Book book, LentStatus status) {
         this(null, null, owner, null, book, status);
+    }
+
+    public void updateLent() {
+        if (status == LentStatus.REQUEST) {
+            status = LentStatus.LENT;
+            return;
+        }
+        throw new IllegalArgumentException("빌림 요청 상태가 아닙니다.");
     }
 }

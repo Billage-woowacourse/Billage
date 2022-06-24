@@ -16,6 +16,8 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.domain.Book;
+import sogorae.billage.domain.Lent;
+import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
@@ -23,6 +25,7 @@ import sogorae.billage.dto.BookUpdateRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.exception.BookNotFoundException;
+import sogorae.billage.repository.LentRepository;
 import sogorae.billage.service.dto.ServiceBookUpdateRequest;
 
 @SpringBootTest
@@ -36,6 +39,9 @@ class BookServiceTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private LentRepository lentRepository;
 
     @Test
     @DisplayName("유저 이메일, 토큰 BookRegisterRequest를 입력 받아, Book을 저장한다.")
@@ -72,9 +78,11 @@ class BookServiceTest {
         // when
         bookService.requestRent(bookId, clientEmail);
         Book book = bookService.findById(bookId);
+        Lent lent = lentRepository.findByBook(book);
 
         // then
         assertThat(book.isRentAvailable()).isFalse();
+        assertThat(lent.getStatus()).isEqualTo(LentStatus.REQUEST);
     }
 
     @Test
@@ -115,7 +123,9 @@ class BookServiceTest {
 
         // then
         Book book = bookService.findById(bookId);
+        Lent lent = lentRepository.findByBook(book);
         assertThat(book.isRentAvailable()).isFalse();
+        assertThat(lent.getStatus()).isEqualTo(LentStatus.LENT);
     }
 
     @Test
