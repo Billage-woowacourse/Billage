@@ -49,4 +49,12 @@ public class HibernateLentRepository implements LentRepository {
           .setParameter("member", member)
           .getResultList();
     }
+
+    @Override
+    public List<Lent> findAllByOwner(Member member) {
+        String jpql = "SELECT l from Lent l WHERE l.owner = :member";
+        return em.createQuery(jpql, Lent.class)
+          .setParameter("member", member)
+          .getResultList();
+    }
 }

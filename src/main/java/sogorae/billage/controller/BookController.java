@@ -17,7 +17,7 @@ import lombok.AllArgsConstructor;
 import sogorae.auth.dto.LoginMember;
 import sogorae.auth.support.AuthenticationPrincipal;
 import sogorae.billage.dto.AllowLentRequest;
-import sogorae.billage.dto.BookClientResponse;
+import sogorae.billage.dto.BookLentResponse;
 import sogorae.billage.dto.BookLentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
@@ -99,14 +99,14 @@ public class BookController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<List<BookResponse>> findAllByMember(@AuthenticationPrincipal LoginMember loginMember) {
-        List<BookResponse> bookResponses = bookService.findAllByMember(loginMember.getEmail());
+    public ResponseEntity<List<BookLentResponse>> findAllByOwner(@AuthenticationPrincipal LoginMember loginMember) {
+        List<BookLentResponse> bookResponses = bookService.findAllByOwner(loginMember.getEmail());
         return ResponseEntity.ok(bookResponses);
     }
 
     @GetMapping("/client")
-    public ResponseEntity<List<BookClientResponse>> findAllByMemberAndLentStatus(@AuthenticationPrincipal LoginMember loginMember) {
-        List<BookClientResponse> response = bookService.findAllByClient(loginMember.getEmail());
+    public ResponseEntity<List<BookLentResponse>> findAllByMemberAndLentStatus(@AuthenticationPrincipal LoginMember loginMember) {
+        List<BookLentResponse> response = bookService.findAllByClient(loginMember.getEmail());
         return ResponseEntity.ok(response);
     }
 }

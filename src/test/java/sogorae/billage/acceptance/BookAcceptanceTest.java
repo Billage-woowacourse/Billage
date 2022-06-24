@@ -17,7 +17,7 @@ import sogorae.billage.AcceptanceTest;
 import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Status;
 import sogorae.billage.dto.AllowLentRequest;
-import sogorae.billage.dto.BookClientResponse;
+import sogorae.billage.dto.BookLentResponse;
 import sogorae.billage.dto.BookLentRequest;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
@@ -165,11 +165,11 @@ public class BookAcceptanceTest extends AcceptanceTest {
         postWithToken("/api/books/" + bookId1 + "/lents", token, allowLentRequest);
 
         ExtractableResponse<Response> response = getWithToken("/api/books/client", clientToken);
-        List<BookClientResponse> actual = response.body().jsonPath().getList(".", BookClientResponse.class);
-        BookClientResponse lentBook = actual.stream()
+        List<BookLentResponse> actual = response.body().jsonPath().getList(".", BookLentResponse.class);
+        BookLentResponse lentBook = actual.stream()
           .filter(i -> (i.getStatus().equals(LentStatus.LENT.name())))
           .findAny().get();
-        BookClientResponse requestBook = actual.stream()
+        BookLentResponse requestBook = actual.stream()
           .filter(i -> (i.getStatus().equals(LentStatus.REQUEST.name())))
           .findAny().get();
 

@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
-import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,8 +19,7 @@ import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Lent;
 import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Member;
-import sogorae.billage.dto.BookClientResponse;
-import sogorae.billage.dto.BookLentRequest;
+import sogorae.billage.dto.BookLentResponse;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
@@ -412,11 +410,11 @@ class BookServiceTest {
         bookService.allowOrDeny(bookId2, email, AllowOrDeny.ALLOW);
 
         // when
-        List<BookClientResponse> books = bookService.findAllByClient(clientEmail);
-        BookClientResponse lentBook = books.stream()
+        List<BookLentResponse> books = bookService.findAllByOwner(clientEmail);
+        BookLentResponse lentBook = books.stream()
           .filter(i -> (i.getStatus().equals(LentStatus.LENT.name())))
           .findAny().get();
-        BookClientResponse requestBook = books.stream()
+        BookLentResponse requestBook = books.stream()
           .filter(i -> (i.getStatus().equals(LentStatus.REQUEST.name())))
           .findAny().get();
 
