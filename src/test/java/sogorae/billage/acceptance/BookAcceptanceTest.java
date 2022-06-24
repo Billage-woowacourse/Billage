@@ -128,7 +128,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
     @DisplayName("client가 빌림 요청 or 빌리고 있는 책들을 조회한다.")
     void findAllByClient() {
         // given
-        String email = "beomWhale@naver.com";
+        String email = "cndqjacndqja@gmail.com";
         String password = "Password";
         MemberSignUpRequest signUpRequest = new MemberSignUpRequest(email, "beom", password);
         post("/api/members", signUpRequest);

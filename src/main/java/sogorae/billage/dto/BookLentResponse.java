@@ -24,7 +24,7 @@ public class BookLentResponse {
 
     public static BookLentResponse from(Lent lent) {
         Book book = lent.getBook();
-        return new BookLentResponse(lent.getId(), lent.getClientNickname(),
+        return new BookLentResponse(book.getId(), lent.getClientNickname(),
           lent.getOwnerNickname(), book.getTitle(), book.getImageUrl(), book.getDetailMessage(), lent.getRequestMessage(),book.getLocation(), lent.getStatus().name());
     }
 }
