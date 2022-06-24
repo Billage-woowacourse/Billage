@@ -42,7 +42,7 @@ public class BookControllerTest extends AcceptanceTest {
 
         Assertions.assertAll(
             () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value()),
-            () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo("대여 요청을 할 수 없습니다.")
+            () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo("주인은 대여 요청할 수 없습니다.")
         );
     }
 

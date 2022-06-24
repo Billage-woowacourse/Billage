@@ -39,7 +39,10 @@ public class Book {
     }
 
     public void requestRent(Member member) {
-        if (status == Status.AVAILABLE && isActive && !this.member.isSameNickname(member)) {
+        if (this.member.isSameNickname(member)) {
+            throw new IllegalArgumentException("주인은 대여 요청할 수 없습니다.");
+        }
+        if (status == Status.AVAILABLE && isActive) {
             status = Status.PENDING;
             return;
         }
