@@ -410,7 +410,7 @@ class BookServiceTest {
         bookService.allowOrDeny(bookId2, email, AllowOrDeny.ALLOW);
 
         // when
-        List<BookLentResponse> books = bookService.findAllByOwner(clientEmail);
+        List<BookLentResponse> books = bookService.findAllByOwner(email);
         BookLentResponse lentBook = books.stream()
           .filter(i -> (i.getStatus().equals(LentStatus.LENT.name())))
           .findAny().get();

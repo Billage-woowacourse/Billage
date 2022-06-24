@@ -29,6 +29,7 @@ public class BookService {
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
     private final LentRepository lentRepository;
+    private final SlackApiService slackApiService;
 
     public Long register(BookRegisterRequest bookRegisterRequest, String email) {
         Member member = memberRepository.findByEmail(email);
@@ -115,7 +116,7 @@ public class BookService {
 
     public List<BookLentResponse> findAllByOwner(String email) {
         Member member = memberRepository.findByEmail(email);
-        List<Lent> lents = lentRepository.findAllByClient(member);
+        List<Lent> lents = lentRepository.findAllByOwner(member);
         return lents.stream()
           .map(BookLentResponse::from)
           .collect(Collectors.toList());
@@ -126,6 +127,14 @@ public class BookService {
         List<Lent> lents = lentRepository.findAllByClient(member);
         return lents.stream()
           .map(BookLentResponse::from)
+          .collect(Collectors.toList());
+    }
+
+    public List<BookResponse> findAllByMember(String email) {
+        Member member = memberRepository.findByEmail(email);
+        List<Book> books = bookRepository.findAllByMember(member);
+        return books.stream()
+          .map(BookResponse::from)
           .collect(Collectors.toList());
     }
 }
