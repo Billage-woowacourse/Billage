@@ -274,12 +274,11 @@ class BookServiceTest {
         Long savedId = bookService.register(bookRegisterRequest, ownerEmail);
 
 
-        // when
+        // when, then
         bookService.changeToInactive(savedId, ownerEmail);
-        Book foundBook = bookService.findById(savedId);
-
-        // then
-        assertThat(foundBook.getIsActive()).isFalse();
+        assertThatThrownBy(() -> bookService.findById(savedId))
+            .isInstanceOf(BookNotFoundException.class)
+            .hasMessage("해당 책이 존재하지 않습니다.");
     }
 
     @Test
