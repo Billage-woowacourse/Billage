@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertAll;
 
 import java.util.List;
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -16,13 +17,17 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 import sogorae.billage.controller.AllowOrDeny;
 import sogorae.billage.domain.Book;
+import sogorae.billage.domain.Lent;
+import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Member;
+import sogorae.billage.dto.BookClientResponse;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.exception.BookInvalidException;
 import sogorae.billage.exception.BookNotFoundException;
+import sogorae.billage.repository.LentRepository;
 import sogorae.billage.service.dto.ServiceBookUpdateRequest;
 
 @SpringBootTest
@@ -36,6 +41,9 @@ class BookServiceTest {
 
     @Autowired
     private MemberService memberService;
+
+    @Autowired
+    private LentRepository lentRepository;
 
     @Test
     @DisplayName("유저 이메일, 토큰 BookRegisterRequest를 입력 받아, Book을 저장한다.")
@@ -56,7 +64,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("bookId와 사용자 email을 입력 받아, 대여 요청한다.")
-    void requestRent() {
+    void requestLent() {
         // given
         String email = "beomWhale@naver.com";
         MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
@@ -70,16 +78,18 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, email);
 
         // when
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
         Book book = bookService.findById(bookId);
+        Lent lent = lentRepository.findByBook(book);
 
         // then
-        assertThat(book.isRentAvailable()).isFalse();
+        assertThat(book.isLentAvailable()).isFalse();
+        assertThat(lent.getStatus()).isEqualTo(LentStatus.REQUEST);
     }
 
     @Test
     @DisplayName("책을 등록한 멤버가 본인의 책을 대여 요청할 시 예외가 발생한다.")
-    void requestRentExceptionInvalidMember() {
+    void requestLentExceptionInvalidMember() {
         // given
         String email = "beomWhale@naver.com";
         MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
@@ -89,14 +99,14 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, email);
 
         // when, then
-        assertThatThrownBy(() -> bookService.requestRent(bookId, email))
+        assertThatThrownBy(() -> bookService.requestLent(bookId, email))
           .isInstanceOf(IllegalArgumentException.class)
           .hasMessage("주인은 대여 요청할 수 없습니다.");
     }
 
     @Test
     @DisplayName("bookId와 사용자 email을 입력 받아, 대여 요청을 수락한다.")
-    void allowRent() {
+    void allowLent() {
         // given
         String ownerEmail = "beomWhale@naver.com";
         MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
@@ -110,17 +120,19 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
         bookService.allowOrDeny(bookId, ownerEmail, AllowOrDeny.ALLOW);
 
         // then
         Book book = bookService.findById(bookId);
-        assertThat(book.isRentAvailable()).isFalse();
+        Lent lent = lentRepository.findByBook(book);
+        assertThat(book.isLentAvailable()).isFalse();
+        assertThat(lent.getStatus()).isEqualTo(LentStatus.LENT);
     }
 
     @Test
     @DisplayName("bookId와 사용자 email을 입력 받아, 대여 요청을 거절한다.")
-    void denyRent() {
+    void denyLent() {
         // given
         String ownerEmail = "beomWhale@naver.com";
         MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
@@ -134,17 +146,17 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
         bookService.allowOrDeny(bookId, ownerEmail, AllowOrDeny.DENY);
 
         // then
         Book book = bookService.findById(bookId);
-        assertThat(book.isRentAvailable()).isTrue();
+        assertThat(book.isLentAvailable()).isTrue();
     }
 
     @Test
     @DisplayName("대여 요청 수락 시, owner가 아니면 예외가 발생한다.")
-    void allowRentExceptionNotAuthority() {
+    void allowLentExceptionNotAuthority() {
         // given
         String ownerEmail = "beomWhale@naver.com";
         MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
@@ -157,7 +169,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
         assertThatThrownBy(() -> bookService.allowOrDeny(bookId, clientEmail, AllowOrDeny.ALLOW))
           .isInstanceOf(BookInvalidException.class)
           .hasMessage("책 대여 요청을 수락할 권한이 없습니다.");
@@ -165,7 +177,7 @@ class BookServiceTest {
 
     @Test
     @DisplayName("대여 요청 거절 시, owner가 아니면 예외가 발생한다.")
-    void denyRentExceptionNotAuthority() {
+    void denyLentExceptionNotAuthority() {
         // given
         String ownerEmail = "beomWhale@naver.com";
         MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
@@ -178,7 +190,7 @@ class BookServiceTest {
         Long bookId = bookService.register(bookRegisterRequest, ownerEmail);
 
         // when
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
         assertThatThrownBy(() -> bookService.allowOrDeny(bookId, clientEmail, AllowOrDeny.DENY))
             .isInstanceOf(BookInvalidException.class)
             .hasMessage("책 대여 요청을 거절할 권한이 없습니다.");
@@ -247,7 +259,7 @@ class BookServiceTest {
           "책 상세 메세지", "책 위치");
         Long savedId = bookService.register(bookRegisterRequest, ownerEmail);
 
-        bookService.requestRent(savedId, clientEmail);
+        bookService.requestLent(savedId, clientEmail);
         bookService.allowOrDeny(savedId, ownerEmail, AllowOrDeny.ALLOW);
 
         // when
@@ -255,7 +267,7 @@ class BookServiceTest {
         Book foundBook = bookService.findById(savedId);
 
         // then
-        assertThat(foundBook.isRentAvailable()).isTrue();
+        assertThat(foundBook.isLentAvailable()).isTrue();
     }
 
     @Test
@@ -322,7 +334,7 @@ class BookServiceTest {
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
           "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
 
         // when
         List<BookResponse> books = bookService.findAllByPendingStatus(email);
@@ -344,7 +356,7 @@ class BookServiceTest {
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
           "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
 
         // when
         List<BookResponse> books = bookService.findAllByPendingStatus(email);
@@ -366,7 +378,7 @@ class BookServiceTest {
         BookRegisterRequest bookRegisterRequest = new BookRegisterRequest("책 제목", "image_url",
           "책 상세 메세지", "책 위치");
         Long bookId = bookService.register(bookRegisterRequest, email);
-        bookService.requestRent(bookId, clientEmail);
+        bookService.requestLent(bookId, clientEmail);
         bookService.allowOrDeny(bookId, email, AllowOrDeny.ALLOW);
 
         // when
@@ -374,5 +386,44 @@ class BookServiceTest {
 
         // then
         assertThat(books.size()).isEqualTo(1);
+    }
+
+    @Test
+    @DisplayName("email을 입력 받아, client가 빌림 요청 or 빌리고 있는 책을 조회한다.")
+    void findAllByClient() {
+        // given
+        String email = "beomWhale@naver.com";
+        MemberSignUpRequest request = new MemberSignUpRequest(email, "beom", "Password");
+        memberService.save(request);
+        String clientEmail = "client@naver.com";
+        MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "client", "Password");
+        memberService.save(clientRequest);
+        String bookTitle1 = "책 제목1";
+        BookRegisterRequest bookRegisterRequest1 = new BookRegisterRequest(bookTitle1, "image_url1",
+          "책 상세 메세지1", "책 위치1");
+        String bookTitle2 = "책 제목2";
+        BookRegisterRequest bookRegisterRequest2 = new BookRegisterRequest(bookTitle2, "image_url2",
+          "책 상세 메세지2", "책 위치2");
+        Long bookId1 = bookService.register(bookRegisterRequest1, email);
+        Long bookId2 = bookService.register(bookRegisterRequest2, email);
+        bookService.requestLent(bookId1, clientEmail);
+        bookService.requestLent(bookId2, clientEmail);
+        bookService.allowOrDeny(bookId2, email, AllowOrDeny.ALLOW);
+
+        // when
+        List<BookClientResponse> books = bookService.findAllByClient(clientEmail);
+        BookClientResponse lentBook = books.stream()
+          .filter(i -> (i.getStatus().equals(LentStatus.LENT.name())))
+          .findAny().get();
+        BookClientResponse requestBook = books.stream()
+          .filter(i -> (i.getStatus().equals(LentStatus.REQUEST.name())))
+          .findAny().get();
+
+        // then
+        assertAll(
+          () -> assertThat(books.size()).isEqualTo(2),
+          () -> assertThat(lentBook.getTitle()).isEqualTo(bookTitle2),
+          () -> assertThat(requestBook.getTitle()).isEqualTo(bookTitle1)
+        );
     }
 }
