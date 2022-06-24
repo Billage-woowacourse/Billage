@@ -1,20 +1,19 @@
 package sogorae.billage.repository;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.assertj.core.api.Assertions.*;
 
 import java.util.List;
+
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
+
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
-import sogorae.billage.domain.Status;
 import sogorae.billage.exception.BookNotFoundException;
 
 @SpringBootTest
@@ -47,6 +46,8 @@ class HibernateBookRepositoryTest {
     void findById() {
         // given
         Member owner = new Member("email@naver.com", "nickname", "password");
+        memberRepository.save(owner);
+
         Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
         Long savedId = bookRepository.save(book);
 

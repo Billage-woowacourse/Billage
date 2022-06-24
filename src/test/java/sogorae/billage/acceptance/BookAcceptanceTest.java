@@ -302,7 +302,15 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
         // when
         ExtractableResponse<Response> response = deleteWithToken("/api/books/" + bookId, token, email);
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+
+        // then
+        ExtractableResponse<Response> responseAllBooks = get("/api/books");
+        List<BookResponse> actual = responseAllBooks.body().jsonPath().getList(".", BookResponse.class);
+
+        assertAll(
+            () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value()),
+            () -> assertThat(actual).hasSize(0)
+        );
     }
 
     @Test
