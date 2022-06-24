@@ -41,7 +41,7 @@ class HibernateLentRepositoryTest {
         bookRepository.save(book);
 
         // when
-        Lent lent = new Lent(owner, client, book, LentStatus.REQUEST);
+        Lent lent = new Lent(owner, client, book, LentStatus.REQUEST, "요청 메세지");
         lentRepository.save(lent);
         Lent expected = lentRepository.findByBook(book);
 
@@ -61,7 +61,7 @@ class HibernateLentRepositoryTest {
         bookRepository.save(book);
 
         // when
-        Lent lent = new Lent(owner, client, book, LentStatus.REQUEST);
+        Lent lent = new Lent(owner, client, book, LentStatus.REQUEST, "요청 메세지");
         lentRepository.save(lent);
         lentRepository.deleteByBook(book);
 

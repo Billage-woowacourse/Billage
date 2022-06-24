@@ -40,12 +40,14 @@ public class Lent {
     @Enumerated(EnumType.STRING)
     private LentStatus status;
 
-    public Lent(Member owner, Member client, Book book, LentStatus status) {
-        this(null, null, owner, client, book, status);
+    private String requestMessage;
+
+    public Lent(Member owner, Member client, Book book, LentStatus status, String requestMessage) {
+        this(null, null, owner, client, book, status, requestMessage);
     }
 
-    public Lent(Member owner, Book book, LentStatus status) {
-        this(null, null, owner, null, book, status);
+    public Lent(Member owner, Book book, LentStatus status, String requestMessage) {
+        this(null, null, owner, null, book, status, requestMessage);
     }
 
     public void updateLent() {

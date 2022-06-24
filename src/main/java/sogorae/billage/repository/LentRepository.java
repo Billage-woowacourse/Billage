@@ -13,4 +13,6 @@ public interface LentRepository {
     Lent findByBook(Book book);
 
     List<Lent> findAllByClient(Member member);
+
+    List<Lent> findAllByOwner(Member member);
 }

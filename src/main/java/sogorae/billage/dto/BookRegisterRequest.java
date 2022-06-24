@@ -6,9 +6,9 @@ import lombok.NoArgsConstructor;
 import sogorae.billage.domain.Book;
 import sogorae.billage.domain.Member;
 
+@Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Getter
 public class BookRegisterRequest {
 
     private String title;

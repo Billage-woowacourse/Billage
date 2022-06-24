@@ -10,7 +10,7 @@ import sogorae.billage.domain.Lent;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
-public class BookClientResponse {
+public class BookLentResponse {
 
     private Long id;
     private String clientNickname;
@@ -18,12 +18,13 @@ public class BookClientResponse {
     private String title;
     private String imageUrl;
     private String detailMessage;
+    private String requestMessage;
     private String location;
     private String status;
 
-    public static BookClientResponse from(Lent lent) {
+    public static BookLentResponse from(Lent lent) {
         Book book = lent.getBook();
-        return new BookClientResponse(lent.getId(), lent.getClientNickname(),
-          lent.getOwnerNickname(), book.getTitle(), book.getImageUrl(), book.getDetailMessage(), book.getLocation(), lent.getStatus().name());
+        return new BookLentResponse(lent.getId(), lent.getClientNickname(),
+          lent.getOwnerNickname(), book.getTitle(), book.getImageUrl(), book.getDetailMessage(), lent.getRequestMessage(),book.getLocation(), lent.getStatus().name());
     }
 }

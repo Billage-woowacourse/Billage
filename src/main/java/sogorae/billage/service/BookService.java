@@ -13,7 +13,7 @@ import sogorae.billage.domain.Member;
 import sogorae.billage.domain.Lent;
 import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Status;
-import sogorae.billage.dto.BookClientResponse;
+import sogorae.billage.dto.BookLentResponse;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.repository.BookRepository;
@@ -36,11 +36,11 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void requestLent(Long bookId, String email) {
+    public void requestLent(Long bookId, String email, String requestMessage) {
         Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
         book.requestLent(client);
-        Lent lent = new Lent(book.getMember(), client, book, LentStatus.REQUEST);
+        Lent lent = new Lent(book.getMember(), client, book, LentStatus.REQUEST, requestMessage);
         lentRepository.save(lent);
     }
 
@@ -113,19 +113,19 @@ public class BookService {
           .collect(Collectors.toList());
     }
 
-    public List<BookResponse> findAllByMember(String email) {
-        Member member = memberRepository.findByEmail(email);
-        List<Book> books = bookRepository.findAllByMember(member);
-        return books.stream()
-          .map(BookResponse::from)
-          .collect(Collectors.toList());
-    }
-
-    public List<BookClientResponse> findAllByClient(String email) {
+    public List<BookLentResponse> findAllByOwner(String email) {
         Member member = memberRepository.findByEmail(email);
         List<Lent> lents = lentRepository.findAllByClient(member);
         return lents.stream()
-          .map(BookClientResponse::from)
+          .map(BookLentResponse::from)
+          .collect(Collectors.toList());
+    }
+
+    public List<BookLentResponse> findAllByClient(String email) {
+        Member member = memberRepository.findByEmail(email);
+        List<Lent> lents = lentRepository.findAllByClient(member);
+        return lents.stream()
+          .map(BookLentResponse::from)
           .collect(Collectors.toList());
     }
 }

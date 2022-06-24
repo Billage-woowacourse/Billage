@@ -15,7 +15,7 @@ class LentTest {
         Member owner = new Member("beomWhale@naver.com", "beomWhale", "Password");
         Member client = new Member("client@naver.com", "client", "Password");
         Book book = new Book(owner, "책 제목", "image_url", "책 상세 메세지", "책 위치");
-        Lent lent = new Lent(owner, client, book, LentStatus.REQUEST);
+        Lent lent = new Lent(owner, client, book, LentStatus.REQUEST, "요청 메세지");
 
         // when
         lent.updateLent();
