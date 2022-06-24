@@ -98,9 +98,15 @@ public class BookController {
         return ResponseEntity.ok(bookResponses);
     }
 
-    @GetMapping("/me")
+    @GetMapping("/me/lent")
     public ResponseEntity<List<BookLentResponse>> findAllByOwner(@AuthenticationPrincipal LoginMember loginMember) {
         List<BookLentResponse> bookResponses = bookService.findAllByOwner(loginMember.getEmail());
+        return ResponseEntity.ok(bookResponses);
+    }
+
+    @GetMapping("/me")
+    public ResponseEntity<List<BookResponse>> findAllByMember(@AuthenticationPrincipal LoginMember loginMember) {
+        List<BookResponse> bookResponses = bookService.findAllByMember(loginMember.getEmail());
         return ResponseEntity.ok(bookResponses);
     }
 
