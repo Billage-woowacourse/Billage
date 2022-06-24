@@ -2,7 +2,6 @@ package sogorae.billage.controller;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,7 +16,8 @@ import org.springframework.web.bind.annotation.RestController;
 import lombok.AllArgsConstructor;
 import sogorae.auth.dto.LoginMember;
 import sogorae.auth.support.AuthenticationPrincipal;
-import sogorae.billage.dto.AllowRentRequest;
+import sogorae.billage.dto.AllowLentRequest;
+import sogorae.billage.dto.BookClientResponse;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
@@ -39,15 +39,15 @@ public class BookController {
     }
 
     @PostMapping("/{bookId}")
-    public ResponseEntity<Void> requestRent(@PathVariable Long bookId,
+    public ResponseEntity<Void> requestLent(@PathVariable Long bookId,
         @AuthenticationPrincipal LoginMember loginMember) {
-        bookService.requestRent(bookId, loginMember.getEmail());
+        bookService.requestLent(bookId, loginMember.getEmail());
         return ResponseEntity.ok().build();
     }
 
-    @PostMapping("/{bookId}/rents")
-    public ResponseEntity<Void> allowRent(@PathVariable Long bookId,
-        @RequestBody AllowRentRequest request,
+    @PostMapping("/{bookId}/lents")
+    public ResponseEntity<Void> allowLent(@PathVariable Long bookId,
+        @RequestBody AllowLentRequest request,
         @AuthenticationPrincipal LoginMember loginMember) {
         bookService.allowOrDeny(bookId, loginMember.getEmail(), AllowOrDeny.from(request.getAllowOrDeny()));
         return ResponseEntity.ok().build();
@@ -87,8 +87,7 @@ public class BookController {
 
     @GetMapping("/pending")
     public ResponseEntity<List<BookResponse>> findAllByPending(@AuthenticationPrincipal LoginMember loginMember) {
-        List<BookResponse> bookResponses = bookService.findAllByPendingStatus(
-          loginMember.getEmail());
+        List<BookResponse> bookResponses = bookService.findAllByPendingStatus(loginMember.getEmail());
         return ResponseEntity.ok(bookResponses);
     }
 
@@ -102,5 +101,11 @@ public class BookController {
     public ResponseEntity<List<BookResponse>> findAllByMember(@AuthenticationPrincipal LoginMember loginMember) {
         List<BookResponse> bookResponses = bookService.findAllByMember(loginMember.getEmail());
         return ResponseEntity.ok(bookResponses);
+    }
+
+    @GetMapping("/client")
+    public ResponseEntity<List<BookClientResponse>> findAllByMemberAndLentStatus(@AuthenticationPrincipal LoginMember loginMember) {
+        List<BookClientResponse> response = bookService.findAllByClient(loginMember.getEmail());
+        return ResponseEntity.ok(response);
     }
 }
