@@ -73,7 +73,7 @@ public class BookController {
     }
 
     @PutMapping("/me/{bookId}")
-    public ResponseEntity<BookResponse> update(@PathVariable Long bookId, BookUpdateRequest request, @AuthenticationPrincipal LoginMember loginMember) {
+    public ResponseEntity<BookResponse> update(@PathVariable Long bookId, @RequestBody BookUpdateRequest request, @AuthenticationPrincipal LoginMember loginMember) {
         bookService.updateInformation(ServiceBookUpdateRequest.from(request, bookId,
           loginMember.getEmail()));
         return ResponseEntity.ok().build();

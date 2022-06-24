@@ -330,8 +330,13 @@ public class BookAcceptanceTest extends AcceptanceTest {
         ExtractableResponse<Response> response = putWithToken(
             "/api/books/me/" + bookId, token, bookUpdateRequest);
 
+        ExtractableResponse<Response> updatedBookResponse = get("api/books/" + bookId);
+        BookResponse bookResponse = updatedBookResponse.as(BookResponse.class);
+
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
+        assertThat(bookResponse.getLocation()).isEqualTo("수정장소");
+        assertThat(bookResponse.getDetailMessage()).isEqualTo("수정 상세 메세지");
     }
 
     private String getTokenWithLogin(LoginMemberRequest loginMemberRequest) {
