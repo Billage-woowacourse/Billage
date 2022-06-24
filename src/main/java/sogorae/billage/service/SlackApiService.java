@@ -45,9 +45,13 @@ public class SlackApiService {
           .build()
           .encode(StandardCharsets.UTF_8)
           .toUri();
-        SlackFindClientIdResponse response = restTemplate.exchange(targetUrl, HttpMethod.POST, httpEntity,
-          SlackFindClientIdResponse.class).getBody();
-        return response.getUserIdToString();
+        try{
+            SlackFindClientIdResponse response = restTemplate.exchange(targetUrl, HttpMethod.POST, httpEntity,
+              SlackFindClientIdResponse.class).getBody();
+            return response.getUserIdToString();
+        }catch (NullPointerException e) {
+            throw new IllegalArgumentException("Slack채널에 해당 Email 이용자가 없습니다.");
+        }
     }
 
     private HttpEntity<String> getHttpEntity() { //헤더에 인증 정보 추가

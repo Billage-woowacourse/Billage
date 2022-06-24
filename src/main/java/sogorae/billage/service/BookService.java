@@ -29,7 +29,6 @@ public class BookService {
     private final BookRepository bookRepository;
     private final MemberRepository memberRepository;
     private final LentRepository lentRepository;
-    private final SlackApiService slackApiService;
 
     public Long register(BookRegisterRequest bookRegisterRequest, String email) {
         Member member = memberRepository.findByEmail(email);
@@ -58,9 +57,9 @@ public class BookService {
     }
 
     private void allowLent(Long bookId, String email) {
-        Member client = memberRepository.findByEmail(email);
+        Member owner = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.allowLent(client);
+        book.allowLent(owner);
         Lent lent = lentRepository.findByBook(book);
         lent.updateLent();
     }
