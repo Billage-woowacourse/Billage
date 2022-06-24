@@ -14,8 +14,10 @@ import io.restassured.response.Response;
 import sogorae.auth.dto.LoginMemberRequest;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.billage.AcceptanceTest;
+import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Status;
-import sogorae.billage.dto.AllowRentRequest;
+import sogorae.billage.dto.AllowLentRequest;
+import sogorae.billage.dto.BookClientResponse;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.dto.BookUpdateRequest;
@@ -50,7 +52,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
     @Test
     @DisplayName("책 id, 빌리는 멤버 email 을 받아 대여 요청을 한다.")
-    void requestRent() {
+    void requestLent() {
         // given
         String email = "beomWhale@naver.com";
         String password = "Password";
@@ -84,7 +86,7 @@ public class BookAcceptanceTest extends AcceptanceTest {
 
     @Test
     @DisplayName("책 id, 빌리는 멤버 email 을 받아 대여 요청을 수락한다.")
-    void allowRent() {
+    void allowLent() {
         // given
         String email = "beomWhale@naver.com";
         String password = "Password";
@@ -113,16 +115,72 @@ public class BookAcceptanceTest extends AcceptanceTest {
         postWithToken("/api/books/" + bookId, clientToken, clientEmail);
 
         // when
-        AllowRentRequest allowRentRequest = new AllowRentRequest("allow");
+        AllowLentRequest allowLentRequest = new AllowLentRequest("allow");
 
         ExtractableResponse<Response> response = postWithToken(
-            "/api/books/" + bookId + "/rents", token, allowRentRequest);
+            "/api/books/" + bookId + "/lents", token, allowLentRequest);
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
     }
 
     @Test
+    @DisplayName("client가 빌림 요청 or 빌리고 있는 책들을 조회한다.")
+    void findAllByClient() {
+        // given
+        String email = "beomWhale@naver.com";
+        String password = "Password";
+        MemberSignUpRequest signUpRequest = new MemberSignUpRequest(email, "beom", password);
+        post("/api/members", signUpRequest);
+
+        String clientEmail = "sojukang@naver.com";
+        String clientPassword = "Password";
+        MemberSignUpRequest clientSignUpRequest = new MemberSignUpRequest(clientEmail, "sojukang", clientPassword);
+        post("/api/members", clientSignUpRequest);
+
+        LoginMemberRequest loginMemberRequest = new LoginMemberRequest(email, password);
+        String token = getTokenWithLogin(loginMemberRequest);
+
+        BookRegisterRequest bookRegisterRequest1 = new BookRegisterRequest("책 제목1", "image_url1",
+          "책 상세 메세지1", "책 위치2");
+        ExtractableResponse<Response> bookRegisterResponse1 = postWithToken("/api/books",
+          token, bookRegisterRequest1);
+        BookRegisterRequest bookRegisterRequest2 = new BookRegisterRequest("책 제목1", "image_url2",
+          "책 상세 메세지2", "책 위치2");
+        ExtractableResponse<Response> bookRegisterResponse2 = postWithToken("/api/books",
+          token, bookRegisterRequest2);
+
+        long bookId1 = getBookId(bookRegisterResponse1);
+        long bookId2 = getBookId(bookRegisterResponse2);
+
+        LoginMemberRequest clientLoginRequest = new LoginMemberRequest(clientEmail,
+          clientPassword);
+        String clientToken = getTokenWithLogin(clientLoginRequest);
+
+        postWithToken("/api/books/" + bookId1, clientToken, clientEmail);
+        postWithToken("/api/books/" + bookId2, clientToken, clientEmail);
+
+        // when
+        AllowLentRequest allowLentRequest = new AllowLentRequest("allow");
+        postWithToken("/api/books/" + bookId1 + "/lents", token, allowLentRequest);
+
+        ExtractableResponse<Response> response = getWithToken("/api/books/client", clientToken);
+        List<BookClientResponse> actual = response.body().jsonPath().getList(".", BookClientResponse.class);
+        BookClientResponse lentBook = actual.stream()
+          .filter(i -> (i.getStatus().equals(LentStatus.LENT.name())))
+          .findAny().get();
+        BookClientResponse requestBook = actual.stream()
+          .filter(i -> (i.getStatus().equals(LentStatus.REQUEST.name())))
+          .findAny().get();
+
+        assertAll(
+          () -> assertThat(actual.size()).isEqualTo(2),
+          () -> assertThat(lentBook.getTitle()).isEqualTo(bookRegisterRequest1.getTitle()),
+          () -> assertThat(requestBook.getTitle()).isEqualTo(bookRegisterRequest2.getTitle())
+        );
+    }
+
+    @Test
     @DisplayName("책 id, 빌리는 멤버 email 을 받아 대여 요청을 거절한다.")
-    void allowRent_deny() {
+    void allowLent_deny() {
         // given
         String email = "beomWhale@naver.com";
         String password = "Password";
@@ -152,9 +210,9 @@ public class BookAcceptanceTest extends AcceptanceTest {
         postWithToken("/api/books/" + bookId, clientToken, clientEmail);
 
         // when
-        AllowRentRequest allowRentRequest = new AllowRentRequest("deny");
+        AllowLentRequest allowLentRequest = new AllowLentRequest("deny");
         ExtractableResponse<Response> response = postWithToken(
-            "/api/books/" + bookId + "/rents", token, allowRentRequest);
+            "/api/books/" + bookId + "/lents", token, allowLentRequest);
 
         // then
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value());
@@ -191,8 +249,8 @@ public class BookAcceptanceTest extends AcceptanceTest {
         // when
         postWithToken("/api/books/" + bookId, clientToken, clientEmail);
 
-        AllowRentRequest allowRentRequest = new AllowRentRequest("allow");
-        postWithToken("/api/books/" + bookId + "/rents", token, allowRentRequest);
+        AllowLentRequest allowLentRequest = new AllowLentRequest("allow");
+        postWithToken("/api/books/" + bookId + "/lents", token, allowLentRequest);
 
         ExtractableResponse<Response> response = putWithToken("/api/books/" + bookId, token, clientEmail);
 

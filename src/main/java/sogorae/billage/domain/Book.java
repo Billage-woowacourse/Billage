@@ -38,7 +38,7 @@ public class Book {
         this(null, member, title, imageUrl, detailMessage, location, Status.AVAILABLE, true);
     }
 
-    public void requestRent(Member member) {
+    public void requestLent(Member member) {
         if (status == Status.AVAILABLE && isActive && !this.member.isSameNickname(member)) {
             status = Status.PENDING;
             return;
@@ -46,17 +46,17 @@ public class Book {
         throw new IllegalArgumentException("대여 요청을 할 수 없습니다.");
     }
 
-    public void allowRent(Member member) {
-        validAllowRent(member);
+    public void allowLent(Member member) {
+        validAllowLent(member);
         status = Status.UNAVAILABLE;
     }
 
-    public void denyRent(Member member) {
-        validDenyRent(member);
+    public void denyLent(Member member) {
+        validDenyLent(member);
         status = Status.AVAILABLE;
     }
 
-    private void validDenyRent(Member member) {
+    private void validDenyLent(Member member) {
         if (noneMatchOwner(member)) {
             throw new BookInvalidException("책 대여 요청을 거절할 권한이 없습니다.");
         }
@@ -65,7 +65,7 @@ public class Book {
         }
     }
 
-    private void validAllowRent(Member member) {
+    private void validAllowLent(Member member) {
         if (noneMatchOwner(member)) {
             throw new BookInvalidException("책 대여 요청을 수락할 권한이 없습니다.");
         }
@@ -74,7 +74,7 @@ public class Book {
         }
     }
 
-    public boolean isRentAvailable() {
+    public boolean isLentAvailable() {
         return status.isAvailable();
     }
 

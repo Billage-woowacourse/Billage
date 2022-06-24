@@ -13,6 +13,7 @@ import sogorae.billage.domain.Member;
 import sogorae.billage.domain.Lent;
 import sogorae.billage.domain.LentStatus;
 import sogorae.billage.domain.Status;
+import sogorae.billage.dto.BookClientResponse;
 import sogorae.billage.dto.BookRegisterRequest;
 import sogorae.billage.dto.BookResponse;
 import sogorae.billage.repository.BookRepository;
@@ -35,10 +36,10 @@ public class BookService {
         return bookRepository.save(book);
     }
 
-    public void requestRent(Long bookId, String email) {
+    public void requestLent(Long bookId, String email) {
         Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.requestRent(client);
+        book.requestLent(client);
         Lent lent = new Lent(book.getMember(), client, book, LentStatus.REQUEST);
         lentRepository.save(lent);
     }
@@ -49,24 +50,24 @@ public class BookService {
 
     public void allowOrDeny(Long bookId, String email, AllowOrDeny allowOrDeny) {
         if (allowOrDeny.isAllow()) {
-            allowRent(bookId, email);
+            allowLent(bookId, email);
             return;
         }
-        denyRent(bookId, email);
+        denyLent(bookId, email);
     }
 
-    private void allowRent(Long bookId, String email) {
+    private void allowLent(Long bookId, String email) {
         Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.allowRent(client);
+        book.allowLent(client);
         Lent lent = lentRepository.findByBook(book);
         lent.updateLent();
     }
 
-    private void denyRent(Long bookId, String email) {
+    private void denyLent(Long bookId, String email) {
         Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.denyRent(client);
+        book.denyLent(client);
         lentRepository.deleteByBook(book);
     }
 
@@ -117,6 +118,14 @@ public class BookService {
         List<Book> books = bookRepository.findAllByMember(member);
         return books.stream()
           .map(BookResponse::from)
+          .collect(Collectors.toList());
+    }
+
+    public List<BookClientResponse> findAllByClient(String email) {
+        Member member = memberRepository.findByEmail(email);
+        List<Lent> lents = lentRepository.findAllByClient(member);
+        return lents.stream()
+          .map(BookClientResponse::from)
           .collect(Collectors.toList());
     }
 }

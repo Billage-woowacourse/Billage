@@ -19,7 +19,7 @@ public class BookControllerTest extends AcceptanceTest {
 
     @Test
     @DisplayName("책을 등록한 멤버가 본인의 책을 대여 요청할 시 400 응답을 반환한다.")
-    void requestRentExceptionInvalidMember() {
+    void requestLentExceptionInvalidMember() {
         // given
         String email = "beomWhale@naver.com";
         String password = "Password";
@@ -67,7 +67,6 @@ public class BookControllerTest extends AcceptanceTest {
             () -> assertThat(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value()),
             () -> assertThat(response.body().jsonPath().getString("message")).isEqualTo("해당 책이 존재하지 않습니다.")
         );
-
     }
 
     private String getTokenWithLogin(LoginMemberRequest loginMemberRequest) {

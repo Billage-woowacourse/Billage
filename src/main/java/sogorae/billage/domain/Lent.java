@@ -55,4 +55,12 @@ public class Lent {
         }
         throw new IllegalArgumentException("빌림 요청 상태가 아닙니다.");
     }
+
+    public String getClientNickname() {
+        return client.getNickname();
+    }
+
+    public String getOwnerNickname() {
+        return owner.getNickname();
+    }
 }

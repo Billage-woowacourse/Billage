@@ -1,5 +1,6 @@
 package sogorae.billage.repository;
 
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -39,5 +40,13 @@ public class HibernateLentRepository implements LentRepository {
         return em.createQuery(queryString, Lent.class)
           .setParameter("book", book)
           .getSingleResult();
+    }
+
+    @Override
+    public List<Lent> findAllByClient(Member member) {
+        String jpql = "SELECT l from Lent l WHERE l.client = :member";
+        return em.createQuery(jpql, Lent.class)
+          .setParameter("member", member)
+          .getResultList();
     }
 }
