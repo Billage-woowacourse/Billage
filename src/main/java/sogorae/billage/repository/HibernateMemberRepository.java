@@ -28,7 +28,7 @@ public class HibernateMemberRepository implements MemberRepository {
     }
 
     private void validateDuplication(Member member) {
-        String queryString = "select count(m.id) > 0 from Member m where m.email = :email OR m.nickname = :nickname";
+        String queryString = "select count(m.id) > 0 from Member m where m.email = :email or m.nickname = :nickname";
         TypedQuery<Boolean> query = em.createQuery(queryString, Boolean.class);
         query.setParameter("email", new Email(member.getEmail()));
         query.setParameter("nickname", new Nickname(member.getNickname()));
