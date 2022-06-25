@@ -27,9 +27,8 @@ public class HibernateLentRepository implements LentRepository {
 
     @Override
     public void deleteByBook(Book book) {
-        String jpql = "DELETE from Lent l WHERE l.status = :status AND l.book = :book";
+        String jpql = "DELETE from Lent l WHERE l.book = :book";
         em.createQuery(jpql)
-          .setParameter("status", LentStatus.REQUEST)
           .setParameter("book", book)
           .executeUpdate();
     }

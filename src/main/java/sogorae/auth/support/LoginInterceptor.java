@@ -2,7 +2,9 @@ package sogorae.auth.support;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.servlet.HandlerInterceptor;
+
 import sogorae.auth.exception.InvalidTokenException;
 
 public class LoginInterceptor implements HandlerInterceptor {
@@ -15,7 +17,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-      Object handler) {
+        Object handler) {
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
