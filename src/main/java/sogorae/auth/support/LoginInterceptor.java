@@ -1,10 +1,10 @@
 package sogorae.auth.support;
 
-import static sogorae.billage.CorsConfig.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.web.servlet.HandlerInterceptor;
+
 import sogorae.auth.exception.InvalidTokenException;
 
 public class LoginInterceptor implements HandlerInterceptor {
@@ -17,20 +17,20 @@ public class LoginInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response,
-      Object handler) {
+        Object handler) {
         if (request.getMethod().equals("OPTIONS")) {
             return true;
         }
 
-        if (request.getMethod().equals("POST") && request.getRequestURI().equals(BASE_URL + "/api/members")) {
+        if (request.getMethod().equals("POST") && request.getRequestURI().equals("/api/members")) {
             return true;
         }
 
-        if (request.getMethod().equals("GET") && request.getRequestURI().equals(BASE_URL + "/api/books")) {
+        if (request.getMethod().equals("GET") && request.getRequestURI().equals("/api/books")) {
             return true;
         }
 
-        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith(BASE_URL + "/api/books/")) {
+        if (request.getMethod().equals("GET") && request.getRequestURI().startsWith("/api/books/")) {
             return true;
         }
 
