@@ -32,16 +32,34 @@ public class HibernateMemberRepositoryTest {
     }
 
     @Test
-    @DisplayName("이미 존재하는 회원을 저장할 시, 예외가 발생한다.")
-    void saveExceptionDuplication() {
+    @DisplayName("이메일이 이미 존재하는 회원을 저장할 시, 예외가 발생한다.")
+    void saveExceptionDuplicationEmail() {
         // given
-        Member member = new Member("sojukang@gmail.com", "sojukang", "12345678");
-        Long savedId = memberRepository.save(member);
+        Member member1 = new Member("sojukang@gmail.com", "sojukang", "12345678");
+        Member member2 = new Member("sojukang@gmail.com", "beomWhale", "12345678");
+        Long savedId = memberRepository.save(member1);
 
         // when
-        assertThatThrownBy(() -> memberRepository.save(member)).isInstanceOf(
+        assertThatThrownBy(() -> memberRepository.save(member2)).isInstanceOf(
             MemberDuplicationException.class)
           .hasMessage("이미 존재하는 회원입니다.");
+
+        // then
+        assertThat(savedId).isNotNull();
+    }
+
+    @Test
+    @DisplayName("닉네임이 이미 존재하는 회원을 저장할 시, 예외가 발생한다.")
+    void saveExceptionDuplicationNickname() {
+        // given
+        Member member1 = new Member("sojukang@gmail.com", "sojukang", "12345678");
+        Member member2 = new Member("beom@gmail.com", "sojukang", "12345678");
+        Long savedId = memberRepository.save(member1);
+
+        // when
+        assertThatThrownBy(() -> memberRepository.save(member2)).isInstanceOf(
+                MemberDuplicationException.class)
+            .hasMessage("이미 존재하는 회원입니다.");
 
         // then
         assertThat(savedId).isNotNull();
