@@ -43,7 +43,7 @@ public class BookService {
         book.requestLent(client);
         Lent lent = new Lent(book.getMember(), client, book, LentStatus.REQUEST, requestMessage);
         lentRepository.save(lent);
-        mailSenderService.send(book.getMember().getEmail(), client.getNickname()+"님이 "+book.getTitle()+"책을 빌림 요청했습니다.");
+        mailSenderService.send(book.getMember().getEmail(), client.getNickname()+"님이 "+book.getTitle().replaceAll("<[^>]*>", " ")+"책을 빌림 요청했습니다. "+ "요청 메세지: "+ lent.getRequestMessage());
     }
 
     public Book findById(Long bookId) {
@@ -64,7 +64,7 @@ public class BookService {
         book.allowLent(owner);
         Lent lent = lentRepository.findByBook(book);
         lent.updateLent();
-        mailSenderService.send(lent.getClient().getEmail(), owner.getNickname()+"님이 "+book.getTitle()+"책을 빌림 요청을 수락했습니다.");
+        mailSenderService.send(lent.getClient().getEmail(), owner.getNickname()+"님이 "+book.getTitle().replaceAll("<[^>]*>", " ")+"책을 빌림 요청을 수락했습니다.");
     }
 
     private void denyLent(Long bookId, String email) {
@@ -72,7 +72,7 @@ public class BookService {
         Book book = bookRepository.findById(bookId);
         book.denyLent(client);
         lentRepository.deleteByBook(book);
-        mailSenderService.send(client.getEmail(), book.getMember().getNickname()+"님이 "+book.getTitle()+"책을 빌림 요청을 거절했습니다.");
+        mailSenderService.send(client.getEmail(), book.getMember().getNickname()+"님이 "+book.getTitle().replaceAll("<[^>]*>", " ")+"책을 빌림 요청을 거절했습니다.");
     }
 
     public List<BookResponse> findAll() {
