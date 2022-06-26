@@ -13,11 +13,24 @@ import org.junit.jupiter.params.provider.ValueSource;
 public class MemberTest {
 
     @ParameterizedTest
-    @CsvSource(value = {"a:46", "a:1"}, delimiter = ':')
-    @DisplayName("정상 이메일 입력 받아, 회원가입을 한다.")
-    void signUpCorrectEmail(String emailChar, int count) {
+    @CsvSource(value = {"a:45", "a:1"}, delimiter = ':')
+    @DisplayName("정상 이메일 입력 받아, 회원가입을 한다(길이).")
+    void signUpCorrectEmailLength(String emailChar, int count) {
         // given
-        String email = emailChar.repeat(count) + "@a.a";
+        String email = emailChar.repeat(count) + "@a.aa";
+
+        // when
+        Member member = new Member(email, "beom", "password123");
+
+        // then
+        assertThat(member).isNotNull();
+    }
+
+    @Test
+    @DisplayName("정상 이메일 입력 받아, 회원가입을 한다(형식).")
+    void signUpCorrectEmailForm() {
+        // given
+        String email = "tmdwn_1112@naver.com";
 
         // when
         Member member = new Member(email, "beom", "password123");
