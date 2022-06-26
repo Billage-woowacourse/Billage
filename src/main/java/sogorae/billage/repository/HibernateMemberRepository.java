@@ -55,7 +55,7 @@ public class HibernateMemberRepository implements MemberRepository {
         try {
             return query.getSingleResult();
         } catch (PersistenceException e) {
-            throw new MemberNotFoundException(e.getCause());
+            throw new MemberNotFoundException();
         }
     }
 }
