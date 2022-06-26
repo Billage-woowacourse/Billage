@@ -136,7 +136,7 @@ class BookServiceTest {
         String ownerEmail = "beomWhale@naver.com";
         MemberSignUpRequest ownerRequest = new MemberSignUpRequest(ownerEmail, "beom", "Password");
         memberService.save(ownerRequest);
-        String clientEmail = "sojukang@naver.com";
+        String clientEmail = "kangsburg@gmail.com";
         MemberSignUpRequest clientRequest = new MemberSignUpRequest(clientEmail, "sojukang", "Password");
         memberService.save(clientRequest);
 
