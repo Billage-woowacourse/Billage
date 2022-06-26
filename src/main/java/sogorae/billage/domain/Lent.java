@@ -65,4 +65,8 @@ public class Lent {
     public String getOwnerNickname() {
         return owner.getNickname();
     }
+
+    public String getClientEmail() {
+        return client.getEmail();
+    }
 }

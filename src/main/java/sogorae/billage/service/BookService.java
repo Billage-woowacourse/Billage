@@ -68,11 +68,12 @@ public class BookService {
     }
 
     private void denyLent(Long bookId, String email) {
-        Member client = memberRepository.findByEmail(email);
+        Member owner = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
-        book.denyLent(client);
+        book.denyLent(owner);
+        Lent lent = lentRepository.findByBook(book);
         lentRepository.deleteByBook(book);
-        mailSenderService.send(client.getEmail(), book.getMember().getNickname()+"님이 "+book.getTitle().replaceAll("<[^>]*>", " ")+"책을 빌림 요청을 거절했습니다.");
+        mailSenderService.send(lent.getClientEmail(), book.getMember().getNickname()+"님이 "+book.getTitle().replaceAll("<[^>]*>", " ")+"책을 빌림 요청을 거절했습니다.");
     }
 
     public List<BookResponse> findAll() {
