@@ -6,6 +6,7 @@ import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,7 +35,7 @@ public class Book {
     private Boolean isActive;
 
     public Book(Member member, String title, String imageUrl, String detailMessage,
-      String location) {
+        String location) {
         this(null, member, title, imageUrl, detailMessage, location, Status.AVAILABLE, true);
     }
 

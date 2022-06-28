@@ -1,14 +1,14 @@
 package sogorae.billage.exception;
 
-import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.core.NestedExceptionUtils;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.client.HttpClientErrorException;
+
+import lombok.extern.slf4j.Slf4j;
 import sogorae.auth.exception.InvalidTokenException;
 import sogorae.auth.exception.LoginFailException;
 
@@ -17,7 +17,8 @@ import sogorae.auth.exception.LoginFailException;
 public class ControllerAdvice {
 
     @ExceptionHandler({LoginFailException.class, MemberNotFoundException.class,
-      IllegalArgumentException.class, MemberDuplicationException.class, MissingServletRequestParameterException.class})
+        IllegalArgumentException.class, MemberDuplicationException.class,
+        MissingServletRequestParameterException.class})
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleBadRequest(RuntimeException e) {
         String message = NestedExceptionUtils.getMostSpecificCause(e).getMessage();
@@ -33,7 +34,8 @@ public class ControllerAdvice {
         return new ErrorResponse(e.getMessage());
     }
 
-    @ExceptionHandler(InvalidTokenException.class)
+    @ExceptionHandler({InvalidTokenException.class,
+        HttpClientErrorException.class})
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ErrorResponse handleInvalidTokenException(RuntimeException e) {
         String message = NestedExceptionUtils.getMostSpecificCause(e).getMessage();

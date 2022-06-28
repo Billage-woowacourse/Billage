@@ -1,17 +1,15 @@
 package sogorae.billage.repository;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
+import org.springframework.stereotype.Repository;
+
+import lombok.RequiredArgsConstructor;
 import sogorae.billage.domain.Book;
-import sogorae.billage.domain.Email;
 import sogorae.billage.domain.Member;
 import sogorae.billage.domain.Status;
 import sogorae.billage.exception.BookNotFoundException;
@@ -63,6 +61,5 @@ public class HibernateBookRepository implements BookRepository {
         query.setParameter("member", member);
         return query.getResultList();
     }
-
 
 }

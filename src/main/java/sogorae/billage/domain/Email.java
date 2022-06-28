@@ -2,7 +2,9 @@ package sogorae.billage.domain;
 
 import java.util.Objects;
 import java.util.regex.Pattern;
+
 import javax.persistence.Embeddable;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,7 +14,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Email {
 
-    private static final Pattern PATTERN = Pattern.compile("^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
+    private static final Pattern PATTERN = Pattern.compile(
+        "^[\\w!#$%&’*+/=?`{|}~^-]+(?:\\.[\\w!#$%&’*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$");
 
     private String email;
 
@@ -53,7 +56,7 @@ public class Email {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Email email1 = (Email) o;
+        Email email1 = (Email)o;
         return Objects.equals(email, email1.email);
     }
 

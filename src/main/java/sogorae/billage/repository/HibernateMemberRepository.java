@@ -4,8 +4,10 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 import javax.persistence.TypedQuery;
-import lombok.RequiredArgsConstructor;
+
 import org.springframework.stereotype.Repository;
+
+import lombok.RequiredArgsConstructor;
 import sogorae.billage.domain.Email;
 import sogorae.billage.domain.Member;
 import sogorae.billage.domain.Nickname;

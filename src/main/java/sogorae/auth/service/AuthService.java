@@ -1,7 +1,8 @@
 package sogorae.auth.service;
 
-import io.jsonwebtoken.JwtException;
 import org.springframework.stereotype.Service;
+
+import io.jsonwebtoken.JwtException;
 import sogorae.auth.dto.LoginMember;
 import sogorae.auth.dto.LoginResponse;
 import sogorae.auth.exception.InvalidTokenException;

@@ -1,9 +1,6 @@
 package sogorae.billage.service.dto;
 
-import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import sogorae.billage.dto.BookUpdateRequest;
 
@@ -17,6 +14,6 @@ public class ServiceBookUpdateRequest {
 
     public static ServiceBookUpdateRequest from(BookUpdateRequest bookUpdateRequest, Long bookId, String email) {
         return new ServiceBookUpdateRequest(bookUpdateRequest.getLocation(),
-          bookUpdateRequest.getDetailMessage(), bookId, email);
+            bookUpdateRequest.getDetailMessage(), bookId, email);
     }
 }

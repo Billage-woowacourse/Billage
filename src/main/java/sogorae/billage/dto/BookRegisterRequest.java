@@ -16,7 +16,6 @@ public class BookRegisterRequest {
     private String detailMessage;
     private String location;
 
-
     public Book toBook(Member member) {
         return new Book(member, title, imageUrl, detailMessage, location);
     }
