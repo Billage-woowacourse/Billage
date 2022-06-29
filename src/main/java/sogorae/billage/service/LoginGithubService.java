@@ -8,12 +8,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.MemberSignUpRequest;
+import sogorae.billage.service.dto.GithubEmailResponse;
 import sogorae.billage.service.dto.LoginGithubResponse;
 
 @Service
@@ -36,7 +38,9 @@ public class LoginGithubService {
 
     public Member login(String code) {
         RestTemplate restTemplate = new RestTemplate();
-        HttpEntity<String> httpEntity = new HttpEntity<>(null);
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(HttpHeaders.ACCEPT, MediaType.APPLICATION_JSON_VALUE);
+        HttpEntity<String> httpEntity = new HttpEntity<>(null, httpHeaders);
         URI targetUrl = UriComponentsBuilder
             .fromUriString(AUTH_BASE_URL)
             .queryParam("client_id", clientID)
@@ -45,6 +49,7 @@ public class LoginGithubService {
             .build()
             .encode(StandardCharsets.UTF_8)
             .toUri();
+
         LoginGithubResponse tokenResponse = restTemplate.exchange(targetUrl, HttpMethod.POST, httpEntity,
             LoginGithubResponse.class).getBody();
 
@@ -55,7 +60,24 @@ public class LoginGithubService {
             memberHttpEntity,
             MemberGithubResponse.class).getBody();
 
+        if (Objects.isNull(memberGithubResponse.getEmail())) {
+            String email = getPrimaryEmail(
+                Objects.requireNonNull(restTemplate.exchange(GITHUB_USER_BASE_URL + "/public_emails", HttpMethod.GET,
+                    memberHttpEntity,
+                    GithubEmailResponse[].class).getBody()));
+            return getMemberByResponse(new MemberGithubResponse(memberGithubResponse.getName(),
+                email));
+        }
         return getMemberByResponse(memberGithubResponse);
+    }
+
+    private String getPrimaryEmail(GithubEmailResponse[] responses) {
+        for (GithubEmailResponse emailResponse : responses) {
+            if (emailResponse.getPrimary()) {
+                return emailResponse.getEmail();
+            }
+        }
+        throw new IllegalArgumentException("No Primary Email");
     }
 
     private Member getMemberByResponse(MemberGithubResponse response) {
@@ -73,6 +95,7 @@ public class LoginGithubService {
     private HttpEntity<String> getHttpEntity(String token) {
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.set("Authorization", "token " + token);
+        httpHeaders.set("User-Agent", "Login-App");
         return new HttpEntity<>(httpHeaders);
     }
 }
