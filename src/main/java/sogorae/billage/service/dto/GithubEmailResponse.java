@@ -1,6 +1,4 @@
-package sogorae.billage.service;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
+package sogorae.billage.service.dto;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
@@ -10,9 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor
 @Getter
-public class MemberGithubResponse {
-
-    @JsonProperty("login")
-    private String name;
+public class GithubEmailResponse {
     private String email;
+    private Boolean primary;
 }
