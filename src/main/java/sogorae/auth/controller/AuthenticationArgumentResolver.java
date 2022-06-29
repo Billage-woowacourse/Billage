@@ -1,11 +1,13 @@
 package sogorae.auth.controller;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.core.MethodParameter;
 import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
+
 import sogorae.auth.dto.LoginMember;
 import sogorae.auth.service.AuthService;
 import sogorae.auth.support.AuthenticationPrincipal;
@@ -26,9 +28,9 @@ public class AuthenticationArgumentResolver implements HandlerMethodArgumentReso
 
     @Override
     public LoginMember resolveArgument(MethodParameter parameter,
-      ModelAndViewContainer mavContainer,
-      NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
-        HttpServletRequest request = (HttpServletRequest) webRequest.getNativeRequest();
+        ModelAndViewContainer mavContainer,
+        NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+        HttpServletRequest request = (HttpServletRequest)webRequest.getNativeRequest();
         String token = AuthorizationExtractor.extract(request);
         return authService.findMemberByToken(token);
     }

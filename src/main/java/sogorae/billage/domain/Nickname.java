@@ -1,7 +1,9 @@
 package sogorae.billage.domain;
 
 import java.util.Objects;
+
 import javax.persistence.Embeddable;
+
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,7 +27,7 @@ public class Nickname {
 
     private void validateLength(String value) {
         int length = value.length();
-        if (length < 1 || length > 20) {
+        if (length < 1 || length > 39) {
             throw new IllegalArgumentException("닉네임 형식에 맞지 않습니다.");
         }
     }
@@ -44,7 +46,7 @@ public class Nickname {
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
-        Nickname nickname1 = (Nickname) o;
+        Nickname nickname1 = (Nickname)o;
         return Objects.equals(nickname, nickname1.nickname);
     }
 

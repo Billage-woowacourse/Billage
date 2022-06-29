@@ -78,7 +78,7 @@ public class MemberTest {
 
     @ParameterizedTest
     @DisplayName("닉네임 글자 수가 맞지 않을 시, 예외가 발생한다.")
-    @CsvSource(value = {"a:0", "a:21"}, delimiter = ':')
+    @CsvSource(value = {"a:0", "a:40"}, delimiter = ':')
     void signUpExceptionInValidNicknameForm(String nicknameChar, int count) {
         // given
         String nickname = nicknameChar.repeat(count);

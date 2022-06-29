@@ -1,15 +1,15 @@
-package sogorae.auth.dto;
+package sogorae.billage.service;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-@Getter
-@AllArgsConstructor
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public class LoginMemberRequest {
+@AllArgsConstructor
+@Getter
+public class MemberGithubResponse {
 
+    private String name;
     private String email;
-    private String password;
 }

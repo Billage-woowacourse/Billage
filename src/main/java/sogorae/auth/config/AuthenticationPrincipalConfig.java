@@ -1,11 +1,13 @@
 package sogorae.auth.config;
 
 import java.util.List;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
 import sogorae.auth.controller.AuthenticationArgumentResolver;
 import sogorae.auth.service.AuthService;
 import sogorae.auth.support.JwtProvider;
@@ -25,8 +27,8 @@ public class AuthenticationPrincipalConfig implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(new LoginInterceptor(jwtProvider))
-          .addPathPatterns("/api/**")
-          .excludePathPatterns("/api/members", "/api/auth/login", "/api/", "/api/naver/**");
+            .addPathPatterns("/api/**")
+            .excludePathPatterns("/api/members", "/api/auth/login/**", "/api/", "/api/naver/**");
     }
 
     @Override

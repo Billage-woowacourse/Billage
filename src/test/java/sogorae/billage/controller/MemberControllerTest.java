@@ -35,7 +35,7 @@ public class MemberControllerTest extends AcceptanceTest {
 
     @ParameterizedTest
     @DisplayName("잘못된 닉네임으로 회원가입 요청할 경우 400 응답을 반환한다.")
-    @CsvSource(value = {"a:0", "a:21"}, delimiter = ':')
+    @CsvSource(value = {"a:0", "a:40"}, delimiter = ':')
     void saveBadRequestEmail(String nicknameChar, int count) {
         // given
         String nickname = nicknameChar.repeat(count);

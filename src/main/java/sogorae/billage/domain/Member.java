@@ -4,6 +4,7 @@ import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+
 import lombok.Getter;
 
 @Entity
@@ -30,6 +31,12 @@ public class Member {
         this.email = new Email(email);
         this.nickname = new Nickname(nickname);
         this.password = new Password(password);
+    }
+
+    public Member(String email, String nickname) {
+        this.email = new Email(email);
+        this.nickname = new Nickname(nickname);
+        this.password = new Password("social_password");
     }
 
     public boolean isSameNickname(Member member) {

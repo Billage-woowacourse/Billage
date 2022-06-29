@@ -13,4 +13,10 @@ public class MemberSignUpRequest {
     private String email;
     private String nickname;
     private String password;
+
+    public MemberSignUpRequest(String email, String nickname) {
+        this.email = email;
+        this.nickname = nickname;
+        this.password = "social_password";
+    }
 }
