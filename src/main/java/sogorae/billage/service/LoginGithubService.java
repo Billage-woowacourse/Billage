@@ -13,11 +13,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import lombok.extern.slf4j.Slf4j;
 import sogorae.billage.domain.Member;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.service.dto.GithubEmailResponse;
 import sogorae.billage.service.dto.LoginGithubResponse;
 
+@Slf4j
 @Service
 public class LoginGithubService {
 
@@ -77,6 +79,13 @@ public class LoginGithubService {
                 return emailResponse.getEmail();
             }
         }
+
+        for (GithubEmailResponse emailResponse : responses) {
+            if (!emailResponse.getPrimary()) {
+                return emailResponse.getEmail();
+            }
+        }
+
         throw new IllegalArgumentException("No Primary Email");
     }
 
