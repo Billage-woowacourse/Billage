@@ -8,12 +8,14 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import sogorae.billage.dto.SearchBookResponse;
 
 @Service
+@Transactional(readOnly = true)
 public class NaverSearchService {
 
     private final static String baseUrl = "https://openapi.naver.com/v1/search/book.json";

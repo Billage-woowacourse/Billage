@@ -1,4 +1,4 @@
-package sogorae.billage.service;
+package sogorae.billage.service.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

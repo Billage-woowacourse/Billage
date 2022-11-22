@@ -22,7 +22,7 @@ import sogorae.billage.repository.MemberRepository;
 import sogorae.billage.service.dto.ServiceBookUpdateRequest;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 @RequiredArgsConstructor
 public class BookService {
 
@@ -31,12 +31,14 @@ public class BookService {
     private final LentRepository lentRepository;
     private final MailSenderService mailSenderService;
 
+    @Transactional
     public Long register(BookRegisterRequest bookRegisterRequest, String email) {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRegisterRequest.toBook(member);
         return bookRepository.save(book);
     }
 
+    @Transactional
     public void requestLent(Long bookId, String email, String requestMessage) {
         Member client = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
@@ -52,6 +54,7 @@ public class BookService {
         return bookRepository.findById(bookId);
     }
 
+    @Transactional
     public void allowOrDeny(Long bookId, String email, AllowOrDeny allowOrDeny) {
         if (allowOrDeny.isAllow()) {
             allowLent(bookId, email);
@@ -86,6 +89,7 @@ public class BookService {
             .collect(Collectors.toList());
     }
 
+    @Transactional
     public void returning(Long bookId, String email) {
         Member owner = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
@@ -93,12 +97,14 @@ public class BookService {
         lentRepository.deleteByBook(book);
     }
 
+    @Transactional
     public void changeToInactive(Long bookId, String email) {
         Member member = memberRepository.findByEmail(email);
         Book book = bookRepository.findById(bookId);
         book.changeToInactive(member);
     }
 
+    @Transactional
     public void updateInformation(ServiceBookUpdateRequest serviceBookUpdateRequest) {
         Member member = memberRepository.findByEmail(serviceBookUpdateRequest.getEmail());
         Book book = bookRepository.findById(serviceBookUpdateRequest.getBookId());

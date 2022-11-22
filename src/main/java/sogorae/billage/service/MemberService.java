@@ -8,7 +8,7 @@ import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.repository.MemberRepository;
 
 @Service
-@Transactional
+@Transactional(readOnly = true)
 public class MemberService {
 
     private final MemberRepository memberRepository;
@@ -17,6 +17,7 @@ public class MemberService {
         this.memberRepository = memberRepository;
     }
 
+    @Transactional
     public Long save(MemberSignUpRequest request) {
         Member member = new Member(request.getEmail(), request.getNickname(), request.getPassword());
         return memberRepository.save(member);

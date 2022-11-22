@@ -10,6 +10,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -18,9 +19,11 @@ import sogorae.billage.domain.Member;
 import sogorae.billage.dto.MemberSignUpRequest;
 import sogorae.billage.service.dto.GithubEmailResponse;
 import sogorae.billage.service.dto.LoginGithubResponse;
+import sogorae.billage.service.dto.MemberGithubResponse;
 
 @Slf4j
 @Service
+@Transactional(readOnly = true)
 public class LoginGithubService {
 
     private static final String AUTH_BASE_URL = "https://github.com/login/oauth/access_token";
